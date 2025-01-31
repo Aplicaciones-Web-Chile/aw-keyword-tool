@@ -104,4 +104,4 @@ AplicacionesWeb - [@aplicacionesweb](https://github.com/Aplicaciones-Web-Chile/)
 
 ## 📞 Soporte
 
-Para soporte, email juan@jorquera.com o abre un issue en GitHub.
+Para soporte, email dev@aplicacionesweb.cl o abre un issue en GitHub.

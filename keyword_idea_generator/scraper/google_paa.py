@@ -1,33 +1,33 @@
-from playwright.sync_api import sync_playwright
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+from ..config import Config
 import logging
-from config import Config
-import time
 
 logger = logging.getLogger(__name__)
 
-def get_paa_keywords(seed_keyword):
-    """Obtiene preguntas de 'People Also Ask' usando Playwright"""
-    paa_items = []
-    
-    try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            page = browser.new_page()
+class GooglePAA:
+    @staticmethod
+    def get_paa_keywords(keyword):
+        """Get 'People Also Ask' questions from Google"""
+        try:
+            url = f"https://www.google.com/search?q={keyword}"
+            response = requests.get(url, headers=Config.REQUEST_HEADERS)
+            response.raise_for_status()
             
-            page.goto(f"https://www.google.com/search?q={seed_keyword}")
-            page.wait_for_selector('.related-question-pair', timeout=10000)
+            soup = BeautifulSoup(response.text, "html.parser")
+            paa_questions = soup.find_all("div", {"class": "related-question-pair"})
             
-            questions = page.query_selector_all('.related-question-pair')
-            for q in questions:
-                question_text = q.inner_text().strip()
-                if question_text:
-                    paa_items.append(question_text)
+            questions = []
+            for question in paa_questions:
+                questions.append(question.text.strip())
             
-            browser.close()
+            if questions:
+                df = pd.DataFrame(questions, columns=["question"])
+                df.to_csv(f"{Config.KEYWORDS_DIR}/paa_{keyword}.csv", index=False)
+                return True
             
-            time.sleep(Config.RATE_LIMIT_DELAY)
-            
-    except Exception as e:
-        logger.error(f"Error en PAA para {seed_keyword}: {str(e)}")
-    
-    return paa_items
+            return False
+        except Exception as e:
+            logger.error(f"Error getting PAA questions: {str(e)}")
+            return False
