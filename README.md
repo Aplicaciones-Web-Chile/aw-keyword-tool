@@ -1,5 +1,11 @@
 # Generador de Ideas para Contenido Web 🚀
 
+[![CI](https://github.com/Aplicaciones-Web-Chile/aw-keyword-tool/actions/workflows/ci.yml/badge.svg)](https://github.com/Aplicaciones-Web-Chile/aw-keyword-tool/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/Aplicaciones-Web-Chile/aw-keyword-tool/branch/main/graph/badge.svg)](https://codecov.io/gh/Aplicaciones-Web-Chile/aw-keyword-tool)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+
 Una herramienta profesional para generar ideas de contenido web basada en datos de Google Autocomplete, People Also Ask y Google Trends.
 
 ## 🌟 Características
