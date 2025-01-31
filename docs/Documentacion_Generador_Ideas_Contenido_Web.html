@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+   <meta charset="UTF-8" />
+   <title>Documentación Técnica Avanzada</title>
+</head>
+
+<body>
+
+   <h1>Documentación Técnica Avanzada: Generador de Ideas para Contenido Web</h1>
+
+   <p><strong>Versión:</strong> 2.1 (Revisada)<br />
+      <strong>Fecha:</strong> 2025-01-31<br />
+      <strong>Autor:</strong> [Tu Nombre o Equipo]<br />
+      <strong>Objetivo:</strong> Automatizar la generación de ideas de contenido web basadas en análisis de un
+      <em>sitemap</em> y fuentes como Google Autocomplete, People Also Ask (PAA) y Google Trends.
+   </p>
+
+   <hr />
+
+   <h2>Tabla de Contenidos</h2>
+   <ol>
+      <li><a href="#visión-general">Visión General</a></li>
+      <li><a href="#objetivos-y-alcance">Objetivos y Alcance</a></li>
+      <li><a href="#requerimientos-técnicos">Requerimientos Técnicos</a></li>
+      <li><a href="#arquitectura-del-proyecto">Arquitectura del Proyecto</a>
+         <ul>
+            <li><a href="#estructura-de-directorios">Estructura de Directorios</a></li>
+            <li><a href="#diagrama-de-componentes-conceptual">Diagrama de Componentes (Conceptual)</a></li>
+         </ul>
+      </li>
+      <li><a href="#flujo-de-datos">Flujo de Datos</a></li>
+      <li><a href="#diseño-e-implementación">Diseño e Implementación</a>
+         <ul>
+            <li><a href="#61-módulo-de-configuración-configpy">Módulo de Configuración (config.py)</a></li>
+            <li><a href="#62-scrapers-y-procesamiento">Scrapers y Procesamiento</a></li>
+            <li><a href="#63-interfaz-web-con-flask">Interfaz Web con Flask</a></li>
+            <li><a href="#64-persistencia-y-cache">Persistencia y Cache</a></li>
+         </ul>
+      </li>
+      <li><a href="#manejo-de-errores-y-seguridad">Manejo de Errores y Seguridad</a></li>
+      <li><a href="#pruebas-y-validación">Pruebas y Validación</a></li>
+      <li><a href="#despliegue-y-operación">Despliegue y Operación</a></li>
+      <li><a href="#mejoras-futuras-y-roadmap">Mejoras Futuras y Roadmap</a></li>
+      <li><a href="#instrucciones-para-el-developer-ia">Instrucciones para el &quot;Developer IA&quot;</a></li>
+      <li><a href="#referencias-y-recursos">Referencias y Recursos</a></li>
+   </ol>
+
+   <hr />
+
+   <h2 id="visión-general">1. Visión General</h2>
+   <p>
+      El <strong>Generador de Ideas para Contenido Web</strong> es una aplicación escrita en <strong>Python</strong>
+      que:
+   </p>
+   <ol>
+      <li><strong>Analiza</strong> el contenido de un sitio leyendo su <code>sitemap.xml</code>.</li>
+      <li><strong>Obtiene</strong> nuevas palabras clave desde <em>Google Autocomplete</em>, <em>People Also Ask</em>
+         (con Playwright) y <em>Google Trends</em> (con Pytrends).</li>
+      <li><strong>Compara</strong> las nuevas palabras clave con el contenido existente (usando un mecanismo de
+         coincidencia parcial).</li>
+      <li><strong>Presenta</strong> resultados (nuevas oportunidades de contenido) mediante una <strong>interfaz
+            web</strong> en Flask.</li>
+      <li><strong>Permite</strong> añadir manualmente nuevas ideas de contenido.</li>
+   </ol>
+
+   <hr />
+
+   <h2 id="objetivos-y-alcance">2. Objetivos y Alcance</h2>
+
+   <h3>Objetivos Principales</h3>
+   <ul>
+      <li><strong>Extracción de Contenido Existente</strong>: Parsear el sitemap y, opcionalmente, scrapear cada URL
+         para obtener títulos y descripciones.</li>
+      <li><strong>Generación de Keywords</strong>: A partir de palabras semilla, usar Google Autocomplete, PAA y Trends
+         para descubrir términos relevantes.</li>
+      <li><strong>Comparación (Fuzzy Matching)</strong>: Determinar si una keyword ya está cubierta por el contenido del
+         sitio.</li>
+      <li><strong>Interfaz Simple</strong>: Mostrar todo en una aplicación web local con posibilidades de filtrar,
+         añadir manualmente, etc.</li>
+   </ul>
+
+   <h3>Alcance</h3>
+   <ul>
+      <li><strong>Scraping Responsable</strong> (con rate limiting y, si es necesario, rotación de user-agents).</li>
+      <li><strong>Persistencia Ligera</strong> con SQLite para el contenido y archivos CSV (o JSON) para almacenar las
+         nuevas keywords.</li>
+      <li><strong>Modularidad</strong>: Posibilidad de agregar más fuentes de datos en el futuro.</li>
+   </ul>
+
+   <hr />
+
+   <h2 id="requerimientos-técnicos">3. Requerimientos Técnicos</h2>
+   <ul>
+      <li><strong>Python 3.10+</strong></li>
+      <li><strong>Librerías Clave</strong>:
+         <ul>
+            <li><code>requests</code>, <code>beautifulsoup4</code>, <code>playwright</code>, <code>pytrends</code>,
+               <code>flask</code>, <code>python-dotenv</code>, <code>difflib</code>, <code>logging</code></li>
+         </ul>
+      </li>
+      <li><strong>Base de Datos</strong>: <em>SQLite</em> (nativo de Python).</li>
+      <li><strong>Framework Web</strong>: <em>Flask</em>.</li>
+      <li><strong>Despliegue</strong>: Local o en un servicio que soporte aplicaciones Flask (Railway, Render, Docker,
+         etc.).</li>
+   </ul>
+
+   <hr />
+
+   <h2 id="arquitectura-del-proyecto">4. Arquitectura del Proyecto</h2>
+
+   <h3 id="estructura-de-directorios">4.1. Estructura de Directorios</h3>
+   <pre><code>keyword_idea_generator/
+├── app.py                   # Punto de entrada (Flask + rutas).
+├── config.py                # Configuración global.
+├── scraper/                 # Módulos de scraping.
+│   ├── sitemap_parser.py        # Extrae URLs, títulos y descripciones del sitemap.
+│   ├── google_autocomplete.py   # Sugerencias de Google Autocomplete.
+│   ├── google_paa.py            # "People Also Ask" vía Playwright.
+│   └── google_trends.py         # Datos de Google Trends con Pytrends.
+├── data/                    # Almacenamiento de datos.
+│   ├── existing_content.db      # SQLite (contenido actual).
+│   └── keywords/               # Carpeta con resultados CSV o JSON.
+│       ├── autocomplete.csv
+│       ├── paa.csv
+│       └── trends.csv
+├── templates/               # Plantillas HTML (Flask).
+│   ├── base.html
+│   ├── index.html
+│   ├── results.html
+│   └── add_keyword.html
+├── static/                  # Archivos estáticos (CSS, JS, imágenes).
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── main.js
+├── requirements.txt         # Dependencias del proyecto.
+└── README.md                # Documentación de uso.
+</code></pre>
+
+   <h3 id="diagrama-de-componentes-conceptual">4.2. Diagrama de Componentes (Conceptual)</h3>
+   <pre><code>
+flowchart LR
+    A[Sitemap.xml] --> B[sitemap_parser.py]
+    B --> C[SQLite: existing_content.db]
+
+    D[Seed Keywords] --> E[google_autocomplete.py]
+    D --> F[google_paa.py]
+    D --> G[google_trends.py]
+
+    E --> E1[(autocomplete.csv)]
+    F --> F1[(paa.csv)]
+    G --> G1[(trends.csv)]
+
+    C & E1 & F1 & G1 --> H[Fuzzy Matching & Análisis]
+    H --> I[Flask App (app.py)]
+    I --> J[Plantillas HTML (results.html)]
+</code></pre>
+   <hr />
+   <h2 id="flujo-de-datos">5. Flujo de Datos</h2>
+   <ol>
+      <li><strong>Sitemap</strong>
+         <ul>
+            <li>Extrae URLs (y meta) &rarr; <strong>SQLite</strong> (tabla: <code>content</code>).</li>
+         </ul>
+      </li>
+      <li><strong>Scrape de Keywords</strong>
+         <ul>
+            <li><strong>Google Autocomplete</strong> &rarr; <code>autocomplete.csv</code></li>
+            <li><strong>People Also Ask</strong> &rarr; <code>paa.csv</code></li>
+            <li><strong>Google Trends</strong> &rarr; <code>trends.csv</code></li>
+         </ul>
+      </li>
+      <li><strong>Fuzzy Matching</strong>
+         <ul>
+            <li>Se comparan las keywords con <code>existing_content.db</code> (títulos/descripciones) para determinar
+               “Cubierta / No cubierta”.</li>
+         </ul>
+      </li>
+      <li><strong>Visualización</strong>
+         <ul>
+            <li>En Flask, se muestran tanto las URLs existentes como las nuevas keywords, indicando su origen y estatus.
+            </li>
+         </ul>
+      </li>
+   </ol>
+   <hr />
+   <h2 id="diseño-e-implementación">6. Diseño e Implementación</h2>
+   <h3 id="61-módulo-de-configuración-configpy">6.1. Módulo de Configuración (config.py)</h3>
+   <p> Encargado de centralizar variables y ajustar parámetros (por ejemplo, <code>SIMILARITY_THRESHOLD</code>,
+      <code>RATE_LIMIT_DELAY</code>, etc.). Puedes usar <code>.env</code> con <code>python-dotenv</code> para mayor
+      flexibilidad. </p>
+   <h3 id="62-scrapers-y-procesamiento">6.2. Scrapers y Procesamiento</h3>
+   <h4>6.2.1. <code>sitemap_parser.py</code></h4>
+   <ul>
+      <li><strong>Función principal:</strong> <code>parse_sitemap(sitemap_url)</code>.</li>
+      <li>Descarga <code>sitemap.xml</code>, extrae <code>&lt;loc&gt;</code> y, opcionalmente, scrapear la URL para
+         obtener <code>&lt;title&gt;</code> y <code>&lt;meta name="description"&gt;</code>.</li>
+   </ul>
+   <h4>6.2.2. <code>google_autocomplete.py</code></h4>
+   <ul>
+      <li><strong>Función:</strong> <code>get_autocomplete_keywords(seed_keyword)</code>.</li>
+      <li>Usa la endpoint <code>http://suggestqueries.google.com/complete/search?client=firefox&amp;q=</code>.</li>
+   </ul>
+   <h4>6.2.3. <code>google_paa.py</code></h4>
+   <ul>
+      <li><strong>Función:</strong> <code>get_paa_keywords(seed_keyword)</code>.</li>
+      <li>Emplea <strong>Playwright</strong> en modo headless para obtener preguntas de "People Also Ask".</li>
+   </ul>
+   <h4>6.2.4. <code>google_trends.py</code></h4>
+   <ul>
+      <li><strong>Función:</strong> <code>get_trends_keywords(seed_keyword)</code>.</li>
+      <li>Configura Pytrends (idioma, zona horaria) y obtiene “related queries”.</li>
+   </ul>
+   <h4>6.2.5. Fuzzy Matching</h4>
+   <ul>
+      <li><strong>Función sugerida:</strong> <code>match_keywords_with_content(keywords, content_rows)</code>.</li>
+      <li>Compara cada keyword con los títulos/descripciones usando, por ejemplo, <code>difflib.SequenceMatcher</code>.
+      </li>
+   </ul>
+   <h3 id="63-interfaz-web-con-flask">6.3. Interfaz Web con Flask</h3>
+   <p> <code>app.py</code> define rutas como: </p>
+   <ul>
+      <li><strong><code>/</code> (GET/POST)</strong>: Para parametrizar el proceso (<code>sitemap_url</code>,
+         <code>seed_keywords</code>, etc.).</li>
+      <li><strong><code>/results</code> (GET)</strong>: Muestra la tabla con URLs y la tabla de keywords (origen +
+         estatus).</li>
+      <li><strong><code>/add_keyword</code> (GET/POST)</strong>: Permite añadir manualmente una nueva keyword.</li>
+   </ul>
+   <p> Utiliza <strong>templates</strong> (<code>index.html</code>, <code>results.html</code>, etc.) y archivos
+      <strong>estáticos</strong> (<code>style.css</code>, <code>main.js</code>) para presentar un dashboard básico. </p>
+   <h3 id="64-persistencia-y-cache">6.4. Persistencia y Cache</h3>
+   <ul>
+      <li><strong>SQLite</strong>: <ul>
+            <li>Tabla <code>content</code> con campos <code>url</code>, <code>title</code>, <code>description</code>.
+            </li>
+         </ul>
+      </li>
+      <li><strong>Archivos CSV</strong>: <ul>
+            <li>Se guardan temporalmente las keywords de cada fuente (<code>autocomplete.csv</code>, etc.).</li>
+         </ul>
+      </li>
+      <li><strong>Caching</strong>: <ul>
+            <li>Evita repetir scraping si ya se hizo recientemente (por ejemplo, guardando timestamps).</li>
+         </ul>
+      </li>
+   </ul>
+   <hr />
+   <h2 id="manejo-de-errores-y-seguridad">7. Manejo de Errores y Seguridad</h2>
+   <ul>
+      <li><strong>Rate Limiting</strong>: <code>time.sleep(RATE_LIMIT_DELAY)</code> para prevenir bloqueos.</li>
+      <li><strong>Rotación de User-Agents</strong> (opcional).</li>
+      <li><strong>Excepciones</strong>: Manejo con <code>try/except</code> y registro en logs (<code>logging</code>
+         module).</li>
+      <li><strong>Localhost</strong>: Ejecutar preferiblemente en localhost para no exponer la app de scraping
+         públicamente.</li>
+   </ul>
+   <hr />
+   <h2 id="pruebas-y-validación">8. Pruebas y Validación</h2>
+   <ol>
+      <li><strong>Extracción de Sitemap</strong>
+         <ul>
+            <li>Verificar que URLs se almacenan en <code>existing_content.db</code>.</li>
+         </ul>
+      </li>
+      <li><strong>Scraping de Autocomplete</strong>
+         <ul>
+            <li>Probar con keywords de ejemplo y confirmar la correcta extracción.</li>
+         </ul>
+      </li>
+      <li><strong>People Also Ask</strong>
+         <ul>
+            <li>Validar que se obtengan preguntas y se guarden en <code>paa.csv</code>.</li>
+         </ul>
+      </li>
+      <li><strong>Interfaz Web</strong>
+         <ul>
+            <li>Comprobar que <code>/results</code> muestre todos los datos (URLs, keywords, estado).</li>
+         </ul>
+      </li>
+      <li><strong>Fuzzy Matching</strong>
+         <ul>
+            <li>Testear con ejemplos conocidos para confirmar clasificación.</li>
+         </ul>
+      </li>
+   </ol>
+   <hr />
+   <h2 id="despliegue-y-operación">9. Despliegue y Operación</h2>
+   <ul>
+      <li><strong>Local</strong>:
+         <pre><code>flask run --host=0.0.0.0 --port=5000 # Visitar http://localhost:5000/ </code></pre>
+      </li>
+      <li><strong>Producción</strong> (Opciones): <ul>
+            <li><strong>Docker</strong>: Crear <code>Dockerfile</code> y desplegar en servicios como <em>Railway</em>,
+               <em>Render</em>, etc.</li>
+            <li><strong>Heroku</strong>: <code>Procfile</code> con <code>web: python app.py</code> y
+               <code>runtime.txt</code> (Python 3.10+).</li>
+            <li><strong>Netlify</strong>: No es el destino ideal para Flask, pero podría usarse con Netlify Functions +
+               contenedor Docker.</li>
+         </ul>
+      </li>
+   </ul>
+   <hr />
+   <h2 id="mejoras-futuras-y-roadmap">10. Mejoras Futuras y Roadmap</h2>
+   <ol>
+      <li><strong>Integrar NLP</strong> (por ejemplo, spaCy) para comparaciones semánticas más avanzadas.</li>
+      <li><strong>Dashboard Interactivo</strong> con gráficos (Plotly, Chart.js) de tendencias.</li>
+      <li><strong>Automatización</strong> con un <em>cron job</em> (Linux) o Task Scheduler (Windows).</li>
+      <li><strong>Integración con CMS</strong> (WordPress, Drupal, etc.) para crear borradores automáticamente.</li>
+      <li><strong>Cache Avanzado</strong> que evite completamente repeticiones de scraping durante un período (ej. 24-72
+         h).</li>
+   </ol>
+   <hr />
+   <h2 id="instrucciones-para-el-developer-ia">11. Instrucciones para el "Developer IA"</h2>
+   <p>En esta sección final, se detallan los pasos <strong>exactos</strong> que tu <em>Developer IA</em> (Windsurf,
+      Codeium, etc.) puede seguir para <strong>generar</strong> el código <strong>en la secuencia lógica</strong> sin
+      que tengas que intervenir manualmente:</p>
+   <ol>
+      <li><strong>Crear la Carpeta de Proyecto</strong>
+         <ul>
+            <li>Nombre sugerido: <code>keyword_idea_generator</code>.</li>
+            <li>Incluir un <code>requirements.txt</code> con las librerías indicadas.</li>
+         </ul>
+      </li>
+      <li><strong>Generar un Entorno Virtual</strong> (si aplica) y el Esqueleto de Flask <ul>
+            <li><code>app.py</code> con una ruta mínima <code>@app.route('/') </code> que devuelva "Hello World" para
+               probar.</li>
+         </ul>
+      </li>
+      <li><strong>Configurar la Estructura de Directorios</strong>
+         <ul>
+            <li><code>scraper/</code>, <code>data/</code>, <code>templates/</code>, <code>static/</code>, etc.</li>
+         </ul>
+      </li>
+      <li><strong>Crear <code>sitemap_parser.py</code></strong>
+         <ul>
+            <li>Función: <code>parse_sitemap(sitemap_url)</code> que baje y parsee el XML del sitemap.</li>
+         </ul>
+      </li>
+      <li><strong>Crear Módulos de Scraping de Keywords</strong>
+         <ul>
+            <li><code>google_autocomplete.py</code> con <code>get_autocomplete_keywords(keyword)</code>.</li>
+            <li><code>google_paa.py</code> con <code>get_paa_keywords(keyword)</code> usando Playwright.</li>
+            <li><code>google_trends.py</code> con <code>get_trends_keywords(keyword)</code> usando Pytrends.</li>
+         </ul>
+      </li>
+      <li><strong>Implementar el Sistema de Persistencia</strong>
+         <ul>
+            <li><strong>SQLite</strong> para almacenar contenido del sitemap (tabla <code>content</code>).</li>
+            <li><strong>CSV</strong> en <code>data/keywords/</code> para guardar las nuevas keywords.</li>
+         </ul>
+      </li>
+      <li><strong>Agregar Lógica de Fuzzy Matching</strong>
+         <ul>
+            <li>Por ejemplo, en un archivo <code>core/fuzzy_match.py</code> (o dentro de <code>sitemap_parser.py</code>)
+               con la función <code>match_keywords_with_content(...)</code>.</li>
+         </ul>
+      </li>
+      <li><strong>Diseñar las Rutas Flask en <code>app.py</code></strong>
+         <ul>
+            <li><strong><code>/</code> (GET/POST)</strong>: formulario para ingresar el URL del sitemap y seed keywords.
+            </li>
+            <li><strong><code>/results</code> (GET)</strong>: muestra la lista de URLs y las keywords (cubiertas / no
+               cubiertas).</li>
+            <li><strong><code>/add_keyword</code> (GET/POST)</strong>: permite añadir una keyword manualmente.</li>
+         </ul>
+      </li>
+      <li><strong>Generar Plantillas y Archivos Estáticos</strong>
+         <ul>
+            <li><code>base.html</code> (layout), <code>index.html</code>, <code>results.html</code>,
+               <code>add_keyword.html</code>.</li>
+            <li><strong>CSS</strong> (estilos básicos) y <strong>JS</strong> (lógica de frontend opcional).</li>
+         </ul>
+      </li>
+      <li><strong>Realizar Pruebas</strong>
+         <ul>
+            <li><em>Caso 1</em>: Verificar extracción del sitemap.</li>
+            <li><em>Caso 2</em>: Autocomplete con seed keywords.</li>
+            <li><em>Caso 3</em>: PAA con Playwright.</li>
+            <li><em>Caso 4</em>: Google Trends.</li>
+            <li><em>Caso 5</em>: Fuzzy matching con contenido existente.</li>
+         </ul>
+      </li>
+      <li><strong>Documentar y Mejorar</strong>
+         <ul>
+            <li>Crear o actualizar el <code>README.md</code> con instrucciones de instalación y uso final.</li>
+            <li>(Opcional) Crear un <code>Dockerfile</code> si se desea desplegar en contenedores.</li>
+         </ul>
+      </li>
+   </ol>
+   <p><strong>Resultado</strong>: Al completar estos pasos, tu IA generará los archivos necesarios y tu proyecto quedará
+      totalmente funcional <em>sin que toques manualmente el código</em>.</p>
+   <hr />
+   <h2 id="referencias-y-recursos">12. Referencias y Recursos</h2>
+   <ul>
+      <li><strong>Flask</strong>: <a href="https://flask.palletsprojects.com/">Documentación Oficial</a></li>
+      <li><strong>BeautifulSoup</strong>: <a href="https://www.crummy.com/software/BeautifulSoup/">Sitio Oficial</a>
+      </li>
+      <li><strong>Playwright</strong>: <a href="https://playwright.dev/python/">Playwright para Python</a></li>
+      <li><strong>Pytrends</strong>: <a href="https://github.com/GeneralMills/pytrends">Pytrends en GitHub</a></li>
+      <li><strong>difflib</strong>: <a href="https://docs.python.org/3/library/difflib.html">Documentación en Python</a>
+      </li>
+      <li><strong>Despliegue en Docker</strong>: <a href="https://docs.docker.com/">Documentación de Docker</a></li>
+   </ul>
+</body>
+
+</html>
