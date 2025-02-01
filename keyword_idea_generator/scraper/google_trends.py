@@ -10,33 +10,45 @@ logger = logging.getLogger(__name__)
 class GoogleTrends:
     @staticmethod
     def get_trends_keywords(keyword):
-        """Get related keywords from Google Trends"""
+        """Obtener keywords relacionadas de Google Trends"""
         try:
-            pytrends = TrendReq(
-                hl=f"{Config.LANGUAGE}-{Config.COUNTRY}",
-                tz=Config.TIMEZONE
-            )
+            pytrends = TrendReq(hl='es', tz=Config.TIMEZONE)
             
-            # Construir payload con la región correcta
+            # Construir payload con configuración regional
             pytrends.build_payload(
                 [keyword],
                 cat=0,
                 timeframe='today 12-m',
-                geo=Config.COUNTRY
+                geo='CL'  # Chile
             )
             
-            related_queries = pytrends.related_queries()
+            # Obtener sugerencias relacionadas
+            related = pytrends.related_queries()
+            suggestions = []
             
-            if keyword in related_queries and related_queries[keyword]['top'] is not None:
-                # Crear un nombre de archivo seguro
-                safe_keyword = quote(keyword, safe='')
-                output_file = os.path.join(Config.KEYWORDS_DIR, f"trends_{safe_keyword}.csv")
-                
-                top_queries = related_queries[keyword]['top']
-                top_queries.to_csv(output_file, index=False, encoding='utf-8-sig')
-                return True
+            if keyword in related and 'top' in related[keyword]:
+                df = related[keyword]['top']
+                if not df.empty:
+                    suggestions = df['query'].tolist()
             
-            return False
+            # Guardar resultados en la base de datos
+            from flask import current_app, g
+            db = g.get_db()
+            
+            # Limpiar resultados anteriores para esta keyword
+            db.execute('DELETE FROM trends_results WHERE seed_keyword = ?', [keyword])
+            
+            # Insertar nuevos resultados
+            for suggestion in suggestions:
+                db.execute('''
+                    INSERT INTO trends_results (keyword, seed_keyword)
+                    VALUES (?, ?)
+                ''', [suggestion, keyword])
+            
+            db.commit()
+            
+            return suggestions
+            
         except Exception as e:
-            logger.error(f"Error getting trends keywords: {str(e)}")
-            return False
+            current_app.logger.error(f"Error en Google Trends para '{keyword}': {str(e)}")
+            return []

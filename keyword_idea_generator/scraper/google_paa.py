@@ -11,37 +11,50 @@ logger = logging.getLogger(__name__)
 class GooglePAA:
     @staticmethod
     def get_paa_keywords(keyword):
-        """Get 'People Also Ask' questions from Google"""
+        """Obtener preguntas relacionadas de Google PAA"""
         try:
+            # Configurar la sesión
+            session = requests.Session()
+            session.headers.update(Config.REQUEST_HEADERS)
+
+            # Construir la URL con los parámetros correctos
             params = {
-                'q': keyword,
-                'hl': Config.LANGUAGE,
-                'gl': Config.COUNTRY,
-                'ie': 'utf8',
-                'oe': 'utf8'
+                "hl": "es",
+                "gl": "CL",  # Región Chile
+                "q": keyword
             }
-            url = f"https://www.google.com/search?{urlencode(params)}"
             
-            response = requests.get(url, headers=Config.REQUEST_HEADERS)
+            response = session.get(Config.SEARCH_URL, params=params)
             response.raise_for_status()
             
-            soup = BeautifulSoup(response.text, "html.parser")
-            paa_questions = soup.find_all("div", {"class": "related-question-pair"})
-            
+            soup = BeautifulSoup(response.text, 'lxml')
             questions = []
-            for question in paa_questions:
-                questions.append(question.text.strip())
             
-            if questions:
-                # Crear un nombre de archivo seguro
-                safe_keyword = quote(keyword, safe='')
-                output_file = os.path.join(Config.KEYWORDS_DIR, f"paa_{safe_keyword}.csv")
-                
-                df = pd.DataFrame(questions, columns=["question"])
-                df.to_csv(output_file, index=False, encoding='utf-8-sig')
-                return True
+            # Buscar las preguntas en el HTML
+            paa_divs = soup.find_all('div', {'class': 'related-question-pair'})
+            for div in paa_divs:
+                question = div.get_text().strip()
+                if question:
+                    questions.append(question)
             
-            return False
+            # Guardar resultados en la base de datos
+            from flask import current_app, g
+            db = g.get_db()
+            
+            # Limpiar resultados anteriores para esta keyword
+            db.execute('DELETE FROM paa_results WHERE seed_keyword = ?', [keyword])
+            
+            # Insertar nuevos resultados
+            for question in questions:
+                db.execute('''
+                    INSERT INTO paa_results (keyword, seed_keyword)
+                    VALUES (?, ?)
+                ''', [question, keyword])
+            
+            db.commit()
+            
+            return questions
+            
         except Exception as e:
-            logger.error(f"Error getting PAA questions: {str(e)}")
-            return False
+            current_app.logger.error(f"Error en Google PAA para '{keyword}': {str(e)}")
+            return []

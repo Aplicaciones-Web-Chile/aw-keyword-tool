@@ -1,40 +1,52 @@
 import requests
-import pandas as pd
+import json
 from urllib.parse import quote
 import os
 from ..config import Config
 import logging
+from flask import current_app, g
 
 logger = logging.getLogger(__name__)
 
 class GoogleAutocomplete:
     @staticmethod
     def get_autocomplete_keywords(keyword):
-        """Get autocomplete suggestions from Google"""
+        """Obtener sugerencias de autocompletado de Google para una keyword"""
         try:
-            url = "http://suggestqueries.google.com/complete/search"
+            # Configurar la sesión
+            session = requests.Session()
+            session.headers.update(Config.REQUEST_HEADERS)
+
+            # Construir la URL con los parámetros correctos
             params = {
                 "client": "firefox",
-                "hl": Config.LANGUAGE,
-                "gl": Config.COUNTRY,
+                "hl": "es",
+                "gl": "CL",  # Región Chile
                 "q": keyword
             }
             
-            response = requests.get(url, params=params, headers=Config.REQUEST_HEADERS)
+            response = session.get(Config.AUTOCOMPLETE_URL, params=params)
             response.raise_for_status()
             
-            suggestions = response.json()[1]
+            suggestions = json.loads(response.text)[1]
             
-            if suggestions:
-                # Crear un nombre de archivo seguro
-                safe_keyword = quote(keyword, safe='')
-                output_file = os.path.join(Config.KEYWORDS_DIR, f"autocomplete_{safe_keyword}.csv")
-                
-                df = pd.DataFrame(suggestions, columns=["suggestion"])
-                df.to_csv(output_file, index=False, encoding='utf-8-sig')
-                return True
+            # Guardar resultados en la base de datos
+            db = g.get_db()
             
-            return False
+            # Limpiar resultados anteriores para esta keyword
+            db.execute('DELETE FROM autocomplete_results WHERE seed_keyword = ?', [keyword])
+            
+            # Insertar nuevos resultados
+            for suggestion in suggestions:
+                db.execute('''
+                    INSERT INTO autocomplete_results (keyword, seed_keyword)
+                    VALUES (?, ?)
+                ''', [suggestion, keyword])
+            
+            db.commit()
+            
+            return suggestions
+            
         except Exception as e:
-            logger.error(f"Error getting autocomplete suggestions: {str(e)}")
-            return False
+            current_app.logger.error(f"Error en Google Autocomplete para '{keyword}': {str(e)}")
+            return []

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, send_file
+from flask import Flask, request, jsonify, render_template, redirect, url_for, send_file, g
 from flask_socketio import SocketIO
 import sqlite3
 import csv
@@ -10,6 +10,8 @@ from .scraper.google_trends import GoogleTrends
 from .scraper.google_paa import GooglePAA
 from .scraper.google_autocomplete import GoogleAutocomplete
 from .sockets.analysis_ws import AnalysisNamespace
+from urllib.parse import urlparse
+from datetime import datetime
 
 # Crear instancias de Flask y SocketIO
 app = Flask(__name__)
@@ -20,33 +22,116 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 socketio.on_namespace(AnalysisNamespace('/analysis'))
 
 # Database initialization
+def get_db():
+    if 'db' not in g:
+        g.db = sqlite3.connect(Config.DATABASE_PATH)
+        g.db.row_factory = sqlite3.Row
+    return g.db
+
 def init_db():
-    with sqlite3.connect(app.config["DATABASE_PATH"]) as conn:
-        # Tabla para el contenido del sitemap
-        conn.execute(
-            """CREATE TABLE IF NOT EXISTS content
-                     (url TEXT PRIMARY KEY,
-                      title TEXT,
-                      description TEXT)"""
+    db = get_db()
+    
+    # Crear tabla de dominios si no existe
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS domains (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            sitemap_url TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-
-        # Tabla para keywords guardadas
-        conn.execute(
-            """CREATE TABLE IF NOT EXISTS saved_keywords
-                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                      keyword TEXT NOT NULL,
-                      type TEXT NOT NULL,
-                      created_at DATETIME NOT NULL,
-                      UNIQUE(keyword, type))"""
+    ''')
+    
+    # Crear tabla de keywords guardadas si no existe
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS saved_keywords (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            keyword TEXT NOT NULL,
+            type TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
+    ''')
+    
+    # Tabla para el contenido del sitemap
+    db.execute(
+        """CREATE TABLE IF NOT EXISTS content
+                 (url TEXT PRIMARY KEY,
+                  title TEXT,
+                  description TEXT)"""
+    )
+    
+    # Tablas para resultados de análisis
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS autocomplete_results (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            keyword TEXT NOT NULL,
+            seed_keyword TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS paa_results (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            keyword TEXT NOT NULL,
+            seed_keyword TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS trends_results (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            keyword TEXT NOT NULL,
+            seed_keyword TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    db.commit()
 
-init_db()
+@app.teardown_appcontext
+def close_db(error):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
+
+# Inicializar la base de datos al inicio
+with app.app_context():
+    init_db()
+
+@app.route("/api/domains", methods=["GET"])
+def get_domains():
+    """Obtener lista de dominios guardados"""
+    db = get_db()
+    domains = db.execute('SELECT * FROM domains ORDER BY created_at DESC').fetchall()
+    return jsonify([dict(domain) for domain in domains])
+
+@app.route("/api/domains", methods=["POST"])
+def save_domain():
+    """Guardar un nuevo dominio"""
+    sitemap_url = request.json.get('sitemap_url')
+    name = request.json.get('name')
+    
+    if not sitemap_url:
+        return jsonify({"error": "URL del sitemap es requerida"}), 400
+        
+    # Si no se proporciona un nombre, extraer del sitemap_url
+    if not name:
+        parsed = urlparse(sitemap_url)
+        name = parsed.netloc
+    
+    db = get_db()
+    db.execute('INSERT INTO domains (name, sitemap_url) VALUES (?, ?)',
+               [name, sitemap_url])
+    db.commit()
+    
+    return jsonify({"success": True, "name": name})
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         sitemap_url = request.form.get("sitemap_url")
-        seed_keywords = request.form.get("seed_keywords", "").split(",")
+        seed_keywords = request.form.get("seed_keywords", "").split("\n")
         
         if not sitemap_url:
             return jsonify({"error": "URL del sitemap es requerida"}), 400
@@ -78,41 +163,78 @@ def index():
 
 @app.route("/results")
 def results():
-    # Leer datos de los archivos CSV
-    autocomplete_keywords = []
-    paa_questions = []
-    trends_keywords = []
+    """Mostrar resultados del análisis"""
+    keywords = {}
+    db = get_db()
+    
+    # Obtener todas las keywords guardadas
+    saved_keywords = {row['keyword'] for row in db.execute('SELECT keyword FROM saved_keywords').fetchall()}
+    
+    # Obtener keywords por tipo y agruparlas por keyword semilla
+    for type_name in ['autocomplete', 'paa', 'trends']:
+        rows = db.execute(f'SELECT keyword, seed_keyword FROM {type_name}_results ORDER BY created_at DESC').fetchall()
+        for row in rows:
+            seed = row['seed_keyword']
+            if seed not in keywords:
+                keywords[seed] = {'autocomplete': [], 'paa': [], 'trends': []}
+            keywords[seed][type_name].append(row['keyword'])
+    
+    return render_template('results.html', keywords=keywords, saved_keywords=saved_keywords)
 
+@app.route("/api/keywords", methods=["POST"])
+def manage_keywords():
+    """Guardar o eliminar keywords"""
+    data = request.json
+    keyword = data.get('keyword')
+    action = data.get('action')
+    
+    if not keyword or action not in ['save', 'unsave']:
+        return jsonify({"error": "Parámetros inválidos"}), 400
+    
+    db = get_db()
     try:
-        # Leer datos de Google Autocomplete
-        with open(app.config["KEYWORD_PATHS"]["autocomplete"], "r", encoding="utf-8") as f:
-            for line in f:
-                term = line.strip()
-                autocomplete_keywords.append({"term": term, "volume": None})
-    except FileNotFoundError:
-        pass
+        if action == 'save':
+            db.execute('INSERT INTO saved_keywords (keyword, type) VALUES (?, ?)',
+                      [keyword, 'manual'])
+        else:
+            db.execute('DELETE FROM saved_keywords WHERE keyword = ?', [keyword])
+        db.commit()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    try:
-        # Leer datos de People Also Ask
-        with open(app.config["KEYWORD_PATHS"]["paa"], "r", encoding="utf-8") as f:
-            paa_questions = [line.strip() for line in f]
-    except FileNotFoundError:
-        pass
-
-    try:
-        # Leer datos de Google Trends
-        with open(app.config["KEYWORD_PATHS"]["trends"], "r", encoding="utf-8") as f:
-            for line in f:
-                term = line.strip()
-                trends_keywords.append({"term": term, "score": "N/A"})
-    except FileNotFoundError:
-        pass
-
-    return render_template(
-        "results.html",
-        autocomplete_keywords=autocomplete_keywords,
-        paa_questions=paa_questions,
-        trends_keywords=trends_keywords,
+@app.route("/export")
+def export_keywords():
+    """Exportar keywords a CSV"""
+    export_type = request.args.get('type', 'all')
+    db = get_db()
+    
+    if export_type == 'selected':
+        rows = db.execute('SELECT keyword, type FROM saved_keywords ORDER BY created_at DESC').fetchall()
+    else:
+        # Obtener todas las keywords de todos los tipos
+        keywords = []
+        for type_name in ['autocomplete', 'paa', 'trends']:
+            type_keywords = db.execute(f'SELECT keyword, seed_keyword, ? as type FROM {type_name}_results',
+                                     [type_name]).fetchall()
+            keywords.extend(type_keywords)
+        rows = keywords
+    
+    # Crear CSV en memoria
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Keyword', 'Tipo', 'Keyword Semilla'])
+    
+    for row in rows:
+        writer.writerow([row['keyword'], row['type'], row.get('seed_keyword', '')])
+    
+    # Enviar archivo
+    output.seek(0)
+    return send_file(
+        output,
+        mimetype='text/csv',
+        as_attachment=True,
+        download_name=f'keywords_{export_type}_{datetime.now().strftime("%Y%m%d")}.csv'
     )
 
 @app.route("/add_keyword", methods=["GET", "POST"])
@@ -140,78 +262,6 @@ def save_keyword():
         return jsonify({"success": True, "message": "Keyword guardada correctamente"})
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
-
-@app.route("/export", methods=["POST"])
-def export_keywords():
-    try:
-        export_type = request.form.get("type", "all")
-        
-        if export_type not in ["all", "autocomplete", "paa", "trends"]:
-            return jsonify({"error": "Tipo de exportación inválido"}), 400
-
-        # Crear un buffer para el CSV
-        output = StringIO()
-        writer = csv.writer(output)
-        writer.writerow(["Keyword", "Tipo", "Fecha"])  # Encabezados
-
-        keywords = []
-        
-        # Función helper para leer keywords
-        def read_keywords_file(file_path, keyword_type):
-            try:
-                if os.path.exists(file_path):
-                    with open(file_path, "r", encoding="utf-8") as f:
-                        return [[line.strip(), keyword_type, ""] for line in f]
-                return []
-            except Exception as e:
-                app.logger.error(f"Error leyendo {keyword_type}: {str(e)}")
-                return []
-
-        # Obtener datos según el tipo
-        if export_type == "all":
-            # Autocomplete keywords
-            keywords.extend(read_keywords_file(
-                app.config["KEYWORD_PATHS"]["autocomplete"],
-                "autocomplete"
-            ))
-
-            # PAA keywords
-            keywords.extend(read_keywords_file(
-                app.config["KEYWORD_PATHS"]["paa"],
-                "paa"
-            ))
-
-            # Trends keywords
-            keywords.extend(read_keywords_file(
-                app.config["KEYWORD_PATHS"]["trends"],
-                "trends"
-            ))
-        else:
-            keywords.extend(read_keywords_file(
-                app.config["KEYWORD_PATHS"][export_type],
-                export_type
-            ))
-
-        # Escribir datos al CSV
-        for keyword in keywords:
-            writer.writerow(keyword)
-
-        # Convertir a bytes para send_file
-        output.seek(0)
-        bytes_output = BytesIO()
-        bytes_output.write(output.getvalue().encode('utf-8-sig'))
-        bytes_output.seek(0)
-        output.close()
-
-        return send_file(
-            bytes_output,
-            mimetype="text/csv",
-            as_attachment=True,
-            download_name="keywords.csv"
-        )
-    except Exception as e:
-        app.logger.error(f"Error en exportación: {str(e)}")
-        return jsonify({"error": f"Error en la exportación: {str(e)}"}), 500
 
 def create_app():
     return app
