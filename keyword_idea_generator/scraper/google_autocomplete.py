@@ -1,5 +1,7 @@
 import requests
 import pandas as pd
+from urllib.parse import quote
+import os
 from ..config import Config
 import logging
 
@@ -13,7 +15,8 @@ class GoogleAutocomplete:
             url = "http://suggestqueries.google.com/complete/search"
             params = {
                 "client": "firefox",
-                "hl": "es",
+                "hl": Config.LANGUAGE,
+                "gl": Config.COUNTRY,
                 "q": keyword
             }
             
@@ -23,8 +26,12 @@ class GoogleAutocomplete:
             suggestions = response.json()[1]
             
             if suggestions:
+                # Crear un nombre de archivo seguro
+                safe_keyword = quote(keyword, safe='')
+                output_file = os.path.join(Config.KEYWORDS_DIR, f"autocomplete_{safe_keyword}.csv")
+                
                 df = pd.DataFrame(suggestions, columns=["suggestion"])
-                df.to_csv(f"{Config.KEYWORDS_DIR}/autocomplete_{keyword}.csv", index=False)
+                df.to_csv(output_file, index=False, encoding='utf-8-sig')
                 return True
             
             return False

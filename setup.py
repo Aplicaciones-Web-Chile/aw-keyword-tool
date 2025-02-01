@@ -14,7 +14,9 @@ setup(
         'flask-login>=0.5.0',
         'flask-socketio>=5.3.6',
         'python-socketio>=5.0.2',
-        'eventlet>=0.33.3'
+        'eventlet>=0.33.3',
+        'pytrends>=4.9.2',
+        'lxml>=4.9.0'
     ],
     entry_points={
         'console_scripts': [

@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+from urllib.parse import quote, urlencode
+import os
 from ..config import Config
 import logging
 
@@ -11,7 +13,15 @@ class GooglePAA:
     def get_paa_keywords(keyword):
         """Get 'People Also Ask' questions from Google"""
         try:
-            url = f"https://www.google.com/search?q={keyword}"
+            params = {
+                'q': keyword,
+                'hl': Config.LANGUAGE,
+                'gl': Config.COUNTRY,
+                'ie': 'utf8',
+                'oe': 'utf8'
+            }
+            url = f"https://www.google.com/search?{urlencode(params)}"
+            
             response = requests.get(url, headers=Config.REQUEST_HEADERS)
             response.raise_for_status()
             
@@ -23,8 +33,12 @@ class GooglePAA:
                 questions.append(question.text.strip())
             
             if questions:
+                # Crear un nombre de archivo seguro
+                safe_keyword = quote(keyword, safe='')
+                output_file = os.path.join(Config.KEYWORDS_DIR, f"paa_{safe_keyword}.csv")
+                
                 df = pd.DataFrame(questions, columns=["question"])
-                df.to_csv(f"{Config.KEYWORDS_DIR}/paa_{keyword}.csv", index=False)
+                df.to_csv(output_file, index=False, encoding='utf-8-sig')
                 return True
             
             return False
