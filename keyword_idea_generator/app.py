@@ -1,14 +1,16 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, send_file, g, flash, current_app, Response
-from flask_socketio import SocketIO
+import os
 import sqlite3
-import csv
-import io
+import logging
 from datetime import datetime
+from flask import Flask, render_template, request, send_file, flash, redirect, url_for, jsonify, current_app, g
+from flask_socketio import SocketIO
 from .config import Config
-from .scraper.google_autocomplete import GoogleAutocomplete
 from .scraper.google_paa import GooglePAA
 from .scraper.google_trends import GoogleTrends
-from .scraper.sitemap_parser import SitemapParser
+from .scraper.google_autocomplete import GoogleAutocomplete
+from .scraper.google_paa_free import GooglePAAFree
+from .scraper.google_trends_free import GoogleTrendsFree
+from .scraper.google_autocomplete_free import GoogleAutocompleteFree
 
 def get_db():
     """Obtener conexión a la base de datos"""
@@ -100,6 +102,16 @@ def create_app(test_config=None):
     with app.app_context():
         init_db()
     
+    # Inicializar scrapers
+    google_paa = GooglePAA(app.config.get('SERPAPI_KEY'))
+    google_trends = GoogleTrends(app.config.get('SERPAPI_KEY'))
+    google_autocomplete = GoogleAutocomplete(app.config.get('SERPAPI_KEY'))
+    
+    # Inicializar scrapers gratuitos
+    google_paa_free = GooglePAAFree()
+    google_trends_free = GoogleTrendsFree()
+    google_autocomplete_free = GoogleAutocompleteFree()
+    
     def close_db(e=None):
         """Cerrar conexión a la base de datos"""
         db = g.pop('db', None)
@@ -142,46 +154,77 @@ def create_app(test_config=None):
                             VALUES (?)
                         ''', [keyword])
                         
-                        # Obtener resultados
+                        # Intentar primero con los scrapers gratuitos
                         try:
-                            autocomplete = GoogleAutocomplete.get_autocomplete_keywords(keyword)
-                            for result in autocomplete:
-                                db.execute('''
-                                    INSERT INTO autocomplete_results (keyword, seed_keyword)
-                                    VALUES (?, ?)
-                                ''', [result, keyword])
+                            # Obtener sugerencias de autocompletado
+                            suggestions = google_autocomplete_free.get_suggestions_with_prefixes(keyword)
+                            if suggestions:
+                                for suggestion in suggestions:
+                                    db.execute(
+                                        'INSERT INTO autocomplete_results (keyword, seed_keyword) VALUES (?, ?)',
+                                        [suggestion, keyword]
+                                    )
                         except Exception as e:
-                            current_app.logger.error(f"Error en GoogleAutocomplete para {keyword}: {str(e)}")
-                            
+                            app.logger.error(f"Error con autocompletado gratuito: {str(e)}")
+                            # Fallback a SerpAPI
+                            suggestions = google_autocomplete.get_suggestions(keyword)
+                            for suggestion in suggestions:
+                                db.execute(
+                                    'INSERT INTO autocomplete_results (keyword, seed_keyword) VALUES (?, ?)',
+                                    [suggestion, keyword]
+                                )
+                        
                         try:
-                            paa = GooglePAA.get_paa_keywords(keyword)
-                            for result in paa:
-                                db.execute('''
-                                    INSERT INTO paa_results (keyword, seed_keyword)
-                                    VALUES (?, ?)
-                                ''', [result, keyword])
+                            # Obtener preguntas relacionadas
+                            questions = google_paa_free.get_related_questions(keyword)
+                            questions.extend(google_paa_free.get_questions_from_serp(keyword))
+                            if questions:
+                                for question in questions:
+                                    db.execute(
+                                        'INSERT INTO paa_results (keyword, seed_keyword) VALUES (?, ?)',
+                                        [question, keyword]
+                                    )
                         except Exception as e:
-                            current_app.logger.error(f"Error en GooglePAA para {keyword}: {str(e)}")
-                            
+                            app.logger.error(f"Error con PAA gratuito: {str(e)}")
+                            # Fallback a SerpAPI
+                            questions = google_paa.get_questions(keyword)
+                            for question in questions:
+                                db.execute(
+                                    'INSERT INTO paa_results (keyword, seed_keyword) VALUES (?, ?)',
+                                    [question, keyword]
+                                )
+                        
                         try:
-                            trends = GoogleTrends.get_trends_keywords(keyword)
-                            for result in trends:
-                                db.execute('''
-                                    INSERT INTO trends_results (keyword, seed_keyword, score)
-                                    VALUES (?, ?, ?)
-                                ''', [result['keyword'], keyword, result['score']])
+                            # Obtener tendencias relacionadas
+                            trends = google_trends_free.get_related_queries(keyword)
+                            if trends:
+                                for trend in trends:
+                                    db.execute(
+                                        'INSERT INTO trends_results (keyword, seed_keyword, score) VALUES (?, ?, ?)',
+                                        [trend['keyword'], keyword, trend['score']]
+                                    )
                         except Exception as e:
-                            current_app.logger.error(f"Error en GoogleTrends para {keyword}: {str(e)}")
-                            
+                            app.logger.error(f"Error con trends gratuito: {str(e)}")
+                            # Fallback a SerpAPI
+                            trends = google_trends.get_related_keywords(keyword)
+                            for trend in trends:
+                                db.execute(
+                                    'INSERT INTO trends_results (keyword, seed_keyword, score) VALUES (?, ?, ?)',
+                                    [trend['keyword'], keyword, trend['score']]
+                                )
+                        
+                        db.commit()
+                        
                     except Exception as e:
-                        current_app.logger.error(f"Error procesando keyword {keyword}: {str(e)}")
+                        app.logger.error(f"Error al procesar keyword {keyword}: {str(e)}")
+                        flash(f'Error al procesar la palabra clave: {keyword}', 'error')
                         continue
                     
                 db.commit()
                 return redirect(url_for("results"))
                 
             except Exception as e:
-                current_app.logger.error(f"Error general procesando keywords: {str(e)}")
+                app.logger.error(f"Error general procesando keywords: {str(e)}")
                 flash("Error procesando las palabras clave. Por favor intenta de nuevo.", "error")
                 return render_template("index.html")
                 
