@@ -337,6 +337,7 @@ def create_app(test_config=None):
             }
         )
 
+    # Rutas API
     @app.route('/api/check_keyword', methods=['POST'])
     def check_keyword():
         """Verificar si una keyword existe en la base de datos"""
@@ -371,7 +372,7 @@ def create_app(test_config=None):
             return jsonify({'exists': exists})
             
         except Exception as e:
-            app.logger.error(f"Error al verificar keyword: {str(e)}")
+            current_app.logger.error(f"Error al verificar keyword: {str(e)}")
             return jsonify({'error': 'Error interno del servidor'}), 500
 
     @app.route('/api/delete_keyword', methods=['POST'])
@@ -396,7 +397,7 @@ def create_app(test_config=None):
             return jsonify({'success': True})
             
         except Exception as e:
-            app.logger.error(f"Error al eliminar keyword: {str(e)}")
+            current_app.logger.error(f"Error al eliminar keyword: {str(e)}")
             return jsonify({'error': 'Error interno del servidor'}), 500
 
     return app

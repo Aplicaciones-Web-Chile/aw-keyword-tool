@@ -1,24 +1,37 @@
 {
   "search_metadata": {
-    "id": "679eceab7c58196848f340a7",
+    "id": "679ed74b3b1998fa3811bd8c",
     "status": "Success",
-    "json_endpoint": "https://serpapi.com/searches/c0cc6075ac0fbfcc/679eceab7c58196848f340a7.json",
-    "created_at": "2025-02-02 01:47:23 UTC",
-    "processed_at": "2025-02-02 01:47:23 UTC",
-    "google_autocomplete_url": "https://www.google.com/complete/search?q=pasarela+de+pago+Chile+tienda+online&gl=cl&hl=es&client=chrome&dpr=1",
-    "raw_html_file": "https://serpapi.com/searches/c0cc6075ac0fbfcc/679eceab7c58196848f340a7.html",
-    "prettify_html_file": "https://serpapi.com/searches/c0cc6075ac0fbfcc/679eceab7c58196848f340a7.prettify",
-    "total_time_taken": 0.66
+    "json_endpoint": "https://serpapi.com/searches/68967cc09e547918/679ed74b3b1998fa3811bd8c.json",
+    "created_at": "2025-02-02 02:24:11 UTC",
+    "processed_at": "2025-02-02 02:24:11 UTC",
+    "google_autocomplete_url": "https://www.google.com/complete/search?q=ERPTienda+Online+Chile&gl=cl&hl=es&client=chrome&dpr=1",
+    "raw_html_file": "https://serpapi.com/searches/68967cc09e547918/679ed74b3b1998fa3811bd8c.html",
+    "prettify_html_file": "https://serpapi.com/searches/68967cc09e547918/679ed74b3b1998fa3811bd8c.prettify",
+    "total_time_taken": 0.57
   },
   "search_parameters": {
     "engine": "google_autocomplete",
-    "q": "pasarela de pago Chile tienda online",
+    "q": "ERPTienda Online Chile",
     "gl": "cl",
     "hl": "es"
   },
   "search_information": {
-    "autocomplete_results_state": "No results."
+    "autocomplete_results_state": "Showing completion results."
   },
-  "suggestions": [],
+  "suggestions": [
+    {
+      "value": "erp chile",
+      "relevance": 601,
+      "type": "QUERY",
+      "serpapi_link": "https://serpapi.com/search.json?engine=google_autocomplete&gl=cl&hl=es&q=erp+chile"
+    },
+    {
+      "value": "erp chile pyme",
+      "relevance": 600,
+      "type": "QUERY",
+      "serpapi_link": "https://serpapi.com/search.json?engine=google_autocomplete&gl=cl&hl=es&q=erp+chile+pyme"
+    }
+  ],
   "verbatim_relevance": 1300
 }
