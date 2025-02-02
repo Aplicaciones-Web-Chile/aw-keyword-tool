@@ -336,7 +336,69 @@ def create_app(test_config=None):
                 "Content-Type": "text/csv"
             }
         )
-    
+
+    @app.route('/api/check_keyword', methods=['POST'])
+    def check_keyword():
+        """Verificar si una keyword existe en la base de datos"""
+        try:
+            data = request.get_json()
+            keyword = data.get('keyword')
+            
+            if not keyword:
+                return jsonify({'error': 'No se proporcionó una keyword'}), 400
+            
+            # Verificar en cada tabla
+            db = get_db()
+            exists = False
+            
+            # Verificar en autocomplete_results
+            cursor = db.execute('SELECT 1 FROM autocomplete_results WHERE seed_keyword = ? LIMIT 1', [keyword])
+            if cursor.fetchone():
+                exists = True
+            
+            # Verificar en trends_results
+            if not exists:
+                cursor = db.execute('SELECT 1 FROM trends_results WHERE seed_keyword = ? LIMIT 1', [keyword])
+                if cursor.fetchone():
+                    exists = True
+            
+            # Verificar en paa_results
+            if not exists:
+                cursor = db.execute('SELECT 1 FROM paa_results WHERE seed_keyword = ? LIMIT 1', [keyword])
+                if cursor.fetchone():
+                    exists = True
+            
+            return jsonify({'exists': exists})
+            
+        except Exception as e:
+            app.logger.error(f"Error al verificar keyword: {str(e)}")
+            return jsonify({'error': 'Error interno del servidor'}), 500
+
+    @app.route('/api/delete_keyword', methods=['POST'])
+    def delete_keyword():
+        """Eliminar una keyword y sus resultados de la base de datos"""
+        try:
+            data = request.get_json()
+            keyword = data.get('keyword')
+            
+            if not keyword:
+                return jsonify({'error': 'No se proporcionó una keyword'}), 400
+            
+            # Eliminar de todas las tablas
+            db = get_db()
+            
+            db.execute('DELETE FROM autocomplete_results WHERE seed_keyword = ?', [keyword])
+            db.execute('DELETE FROM trends_results WHERE seed_keyword = ?', [keyword])
+            db.execute('DELETE FROM paa_results WHERE seed_keyword = ?', [keyword])
+            
+            db.commit()
+            
+            return jsonify({'success': True})
+            
+        except Exception as e:
+            app.logger.error(f"Error al eliminar keyword: {str(e)}")
+            return jsonify({'error': 'Error interno del servidor'}), 500
+
     return app
 
 if __name__ == "__main__":

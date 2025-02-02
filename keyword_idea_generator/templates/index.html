@@ -52,14 +52,18 @@
                             <i class="fas fa-tags me-2"></i>
                             Palabras Clave Semilla
                         </label>
-                        <textarea class="form-control" 
-                                id="seed_keywords" 
-                                name="seed_keywords" 
-                                rows="3"
-                                placeholder="Ingresa tus palabras clave, una por línea (ej:&#10;marketing digital&#10;SEO&#10;redes sociales)"
-                                required></textarea>
+                        <input type="text" 
+                               class="form-control" 
+                               id="seed_keywords" 
+                               name="seed_keywords" 
+                               placeholder="Escribe una palabra clave y presiona Enter"
+                               required>
                         <div class="form-text text-muted">
                             Las palabras clave semilla se usarán para generar ideas relacionadas
+                        </div>
+                        <div id="keywordWarning" class="alert alert-warning mt-2 d-none">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span></span>
                         </div>
                     </div>
 
@@ -117,7 +121,89 @@
 
 {% block scripts %}
 <script>
+// Inicializar Tagify
+var input = document.getElementById('seed_keywords');
+var tagify = new Tagify(input, {
+    delimiters: "\n",
+    pattern: /.{3,}/,  // Mínimo 3 caracteres
+    maxTags: 10,       // Máximo 10 keywords
+    placeholder: "Escribe una palabra clave y presiona Enter",
+    dropdown: {
+        enabled: 0
+    }
+});
+
+// Función para verificar si una keyword ya existe en la base de datos
+async function checkKeywordExists(keyword) {
+    try {
+        const response = await fetch('/api/check_keyword', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ keyword: keyword })
+        });
+        const data = await response.json();
+        return data.exists;
+    } catch (error) {
+        console.error('Error al verificar keyword:', error);
+        return false;
+    }
+}
+
+// Función para eliminar una keyword de la base de datos
+async function deleteKeyword(keyword) {
+    try {
+        const response = await fetch('/api/delete_keyword', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ keyword: keyword })
+        });
+        const data = await response.json();
+        return data.success;
+    } catch (error) {
+        console.error('Error al eliminar keyword:', error);
+        return false;
+    }
+}
+
+// Mostrar advertencia cuando se agrega una keyword existente
+tagify.on('add', async function(e) {
+    const keyword = e.detail.data.value;
+    const exists = await checkKeywordExists(keyword);
+    
+    if (exists) {
+        const warning = document.getElementById('keywordWarning');
+        warning.querySelector('span').textContent = `La palabra clave "${keyword}" ya existe en la base de datos. Se eliminarán los resultados anteriores.`;
+        warning.classList.remove('d-none');
+        
+        // Eliminar resultados anteriores
+        await deleteKeyword(keyword);
+    } else {
+        document.getElementById('keywordWarning').classList.add('d-none');
+    }
+});
+
+// Ocultar advertencia cuando se elimina una keyword
+tagify.on('remove', function(e) {
+    document.getElementById('keywordWarning').classList.add('d-none');
+});
+
+// Procesar el formulario
 document.getElementById('analysisForm').addEventListener('submit', function(e) {
+    // Validar que haya al menos una keyword
+    if (tagify.value.length === 0) {
+        e.preventDefault();
+        alert('Por favor, ingresa al menos una palabra clave');
+        return;
+    }
+    
+    // Convertir tags a formato de texto
+    const keywords = tagify.value.map(tag => tag.value).join('\n');
+    input.value = keywords;
+    
     // Mostrar el loader
     toggleLoader(true);
     
@@ -126,5 +212,11 @@ document.getElementById('analysisForm').addEventListener('submit', function(e) {
     submitButton.disabled = true;
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
 });
+
+// Cargar URL del sitemap guardada
+const savedUrl = localStorage.getItem('sitemap_url');
+if (savedUrl) {
+    document.getElementById('sitemap_url').value = savedUrl;
+}
 </script>
 {% endblock %}
