@@ -1,0 +1,322 @@
+{
+  "search_metadata": {
+    "id": "679eceacd93e94da3227f94a",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/01aebd3eade2f571/679eceacd93e94da3227f94a.json",
+    "created_at": "2025-02-02 01:47:24 UTC",
+    "processed_at": "2025-02-02 01:47:24 UTC",
+    "google_url": "https://www.google.cl/search?q=pasarela+de+pago+Chile+tienda+online&oq=pasarela+de+pago+Chile+tienda+online&uule=w+CAIQICIFQ2hpbGU&hl=es&gl=cl&sourceid=chrome&ie=UTF-8",
+    "raw_html_file": "https://serpapi.com/searches/01aebd3eade2f571/679eceacd93e94da3227f94a.html",
+    "total_time_taken": 2.25
+  },
+  "search_parameters": {
+    "engine": "google",
+    "q": "pasarela de pago Chile tienda online",
+    "location_requested": "Chile",
+    "location_used": "Chile",
+    "google_domain": "google.cl",
+    "hl": "es",
+    "gl": "cl",
+    "device": "desktop"
+  },
+  "search_information": {
+    "query_displayed": "pasarela de pago Chile tienda online",
+    "total_results": 348000,
+    "time_taken_displayed": 0.55,
+    "organic_results_state": "Results for exact spelling"
+  },
+  "related_questions": [
+    {
+      "question": "¿Cuál es la mejor pasarela de pago en Chile?",
+      "snippet": "PayU es una de las mejores pasarelas de pagos considerada líder en el mercado global, con una sólida presencia en países clave como México, Colombia, Argentina, Chile y Brasil.",
+      "title": "Las 10 Mejores Pasarelas de Pago para E-Commerce en Latinoamérica",
+      "date": "30-10-2024",
+      "link": "https://www.dreamhost.com/blog/es/pasarelas-populares-de-pago/#:~:text=PayU%20es%20una%20de%20las,%2C%20Argentina%2C%20Chile%20y%20Brasil.",
+      "displayed_link": "https://www.dreamhost.com › blog › pasarelas-populares-...",
+      "source_logo": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/918734efbc8c45256488764c89b9097ae217f990b4cfbce7abae095b88a6fbee.png",
+      "next_page_token": "eyJvbnMiOiIxMDA0MSIsImZjIjoiRXFFQkNtSkJRUzFMVkdoa2RtOVlSbUp0Ukc5WGVHeEljR3cwWDBrNVRXaFBWVzVrVUZOamJtUklWM056ZW5GcmRHUXpjM1p4TVhaa2VpMW1WbE4xTWpWNk9FVk1aMk5IYzNwd2JEUmxYMjVEYUZKMk9FUkdNbE5MUlhaeFJtRjVUSEJHYzBoT2R4SVhjbk0yWlZvM1EzbERTemRPTVdVNFVEWmFkalV0UVdzYUlrRkRSRmhNTkcxTFMxOXRZM2d5ZDNSQlJ6QkNjVzFuVjBKaE1FOVpSSEE1VUhjIiwiZmN2IjoiMyIsImVpIjoicnM2ZVo3Q3lDSzdOMWU4UDZadjUtQWsiLCJxYyI6IkNpUndZWE5oY21Wc1lTQmtaU0J3WVdkdklHTm9hV3hsSUhScFpXNWtZU0J2Ym14cGJtVVFEbjNwamhFX29nRUNaWE0iLCJxdWVzdGlvbiI6IsK/Q3XDoWwgZXMgbGEgbWVqb3IgcGFzYXJlbGEgZGUgcGFnbyBlbiBDaGlsZT8iLCJsayI6ImM1UFNTaTVOekZGSUxWYklTVlRJVGMzS0wxSW9TQ3hPTEVvRmNsTlNnZXowZklYVVBJWGtqTXljVkFBIiwiYnMiOiJjLU5LNU5JN3ROLTU5UERDSElYVVlvV2NSSVhjMUt6OElvV0N4T0xFb2xRZ055VVZ5RTdQVjBqTlUzRE95TXhKdFpkNEptV2tJNldWWEpwSVdFY3lTQWRYR0pmbW9mMkJwWWRYZ3RTWDVpVmlWWnB6ZUcxZWFxSzl4RkV6SXpVcGxjTFNWTHlLTTRGcXVkSzVqSkNjbnBxamtIdDRaVWwtU2o1Y1plN2hoVUF6aWhOVFVKd3ZZcVFucFFOelBraFhLcXFtUkNROUVBX29jNGtpUE9DV2sxOE9NMnRIbXBHd2xDRFVzV2tnQ2JBR0FVWUEiLCJpZCI6ImZjX3JzNmVaN0N5Q0s3TjFlOFA2WnY1LUFrXzMifQ==",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_related_questions&google_domain=google.com&next_page_token=eyJvbnMiOiIxMDA0MSIsImZjIjoiRXFFQkNtSkJRUzFMVkdoa2RtOVlSbUp0Ukc5WGVHeEljR3cwWDBrNVRXaFBWVzVrVUZOamJtUklWM056ZW5GcmRHUXpjM1p4TVhaa2VpMW1WbE4xTWpWNk9FVk1aMk5IYzNwd2JEUmxYMjVEYUZKMk9FUkdNbE5MUlhaeFJtRjVUSEJHYzBoT2R4SVhjbk0yWlZvM1EzbERTemRPTVdVNFVEWmFkalV0UVdzYUlrRkRSRmhNTkcxTFMxOXRZM2d5ZDNSQlJ6QkNjVzFuVjBKaE1FOVpSSEE1VUhjIiwiZmN2IjoiMyIsImVpIjoicnM2ZVo3Q3lDSzdOMWU4UDZadjUtQWsiLCJxYyI6IkNpUndZWE5oY21Wc1lTQmtaU0J3WVdkdklHTm9hV3hsSUhScFpXNWtZU0J2Ym14cGJtVVFEbjNwamhFX29nRUNaWE0iLCJxdWVzdGlvbiI6IsK%2FQ3XDoWwgZXMgbGEgbWVqb3IgcGFzYXJlbGEgZGUgcGFnbyBlbiBDaGlsZT8iLCJsayI6ImM1UFNTaTVOekZGSUxWYklTVlRJVGMzS0wxSW9TQ3hPTEVvRmNsTlNnZXowZklYVVBJWGtqTXljVkFBIiwiYnMiOiJjLU5LNU5JN3ROLTU5UERDSElYVVlvV2NSSVhjMUt6OElvV0N4T0xFb2xRZ055VVZ5RTdQVjBqTlUzRE95TXhKdFpkNEptV2tJNldWWEpwSVdFY3lTQWRYR0pmbW9mMkJwWWRYZ3RTWDVpVmlWWnB6ZUcxZWFxSzl4RkV6SXpVcGxjTFNWTHlLTTRGcXVkSzVqSkNjbnBxamtIdDRaVWwtU2o1Y1plN2hoVUF6aWhOVFVKd3ZZcVFucFFOelBraFhLcXFtUkNROUVBX29jNGtpUE9DV2sxOE9NMnRIbXBHd2xDRFVzV2tnQ2JBR0FVWUEiLCJpZCI6ImZjX3JzNmVaN0N5Q0s3TjFlOFA2WnY1LUFrXzMifQ%3D%3D"
+    },
+    {
+      "question": "¿Qué es una pasarela de pago en línea?",
+      "snippet": "Las pasarelas de pago son plataformas que permiten una transacción monetaria entre dos personas por Internet. Son la forma más simple y rápida de cobrar tus ventas online.",
+      "title": "¿Qué es una pasarela de pago y cómo utilizarla en mi Tiendanube?",
+      "date": "06-09-2024",
+      "link": "https://ayuda.tiendanube.com/es_ES/122919-informacion/que-es-una-pasarela-de-pago#:~:text=Las%20pasarelas%20de%20pago%20son,de%20cobrar%20tus%20ventas%20online.",
+      "displayed_link": "https://ayuda.tiendanube.com › 122919-informacion › qu...",
+      "source_logo": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/918734efbc8c45256488764c89b9097ad0f119ab707ff31109af3623f32b5178.png",
+      "next_page_token": "eyJvbnMiOiIxMDA0MSIsImZjIjoiRXFFQkNtSkJRUzFMVkdoa2RtOVlSbUp0Ukc5WGVHeEljR3cwWDBrNVRXaFBWVzVrVUZOamJtUklWM056ZW5GcmRHUXpjM1p4TVhaa2VpMW1WbE4xTWpWNk9FVk1aMk5IYzNwd2JEUmxYMjVEYUZKMk9FUkdNbE5MUlhaeFJtRjVUSEJHYzBoT2R4SVhjbk0yWlZvM1EzbERTemRPTVdVNFVEWmFkalV0UVdzYUlrRkRSRmhNTkcxTFMxOXRZM2d5ZDNSQlJ6QkNjVzFuVjBKaE1FOVpSSEE1VUhjIiwiZmN2IjoiMyIsImVpIjoicnM2ZVo3Q3lDSzdOMWU4UDZadjUtQWsiLCJxYyI6IkNpUndZWE5oY21Wc1lTQmtaU0J3WVdkdklHTm9hV3hsSUhScFpXNWtZU0J2Ym14cGJtVVFEbjNwamhFX29nRUNaWE0iLCJxdWVzdGlvbiI6IsK/UXXDqSBlcyB1bmEgcGFzYXJlbGEgZGUgcGFnbyBlbiBsw61uZWE/IiwibGsiOiJHaVJ4ZFdVZ1pYTWdkVzVoSUhCaGMyRnlaV3hoSUdSbElIQmhaMjhnWlc0Z2JHbHVaV0UiLCJicyI6ImMtTks1Tkk3dE4tNTlQRENISVhVWW9XY1JJWGMxS3o4SW9XQ3hPTEVvbFFnTnlVVnlFN1BWMGpOVTNET3lNeEp0WmQ0Sm1Xa0k2V1ZYSnBJV0VjeVNBZFhHSmZtb2YyQnBZZFhndFNYNWlWaVZacHplRzFlYXFLOXhGRXpJelVwbGNMU1ZMeUtNNEZxdWRLNWpKQ2NucHFqa0h0NFpVbC1TajVjWmU3aGhVQXppaE5UVUp3dllxUW5wUU56UGtoWEtxcW1SQ1E5RUFfb2M0a2lQT0NXazE4T00ydEhtcEd3bENEVXNXa2dDYkFHQVVZQSIsImlkIjoiZmNfcnM2ZVo3Q3lDSzdOMWU4UDZadjUtQWtfMyJ9",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_related_questions&google_domain=google.com&next_page_token=eyJvbnMiOiIxMDA0MSIsImZjIjoiRXFFQkNtSkJRUzFMVkdoa2RtOVlSbUp0Ukc5WGVHeEljR3cwWDBrNVRXaFBWVzVrVUZOamJtUklWM056ZW5GcmRHUXpjM1p4TVhaa2VpMW1WbE4xTWpWNk9FVk1aMk5IYzNwd2JEUmxYMjVEYUZKMk9FUkdNbE5MUlhaeFJtRjVUSEJHYzBoT2R4SVhjbk0yWlZvM1EzbERTemRPTVdVNFVEWmFkalV0UVdzYUlrRkRSRmhNTkcxTFMxOXRZM2d5ZDNSQlJ6QkNjVzFuVjBKaE1FOVpSSEE1VUhjIiwiZmN2IjoiMyIsImVpIjoicnM2ZVo3Q3lDSzdOMWU4UDZadjUtQWsiLCJxYyI6IkNpUndZWE5oY21Wc1lTQmtaU0J3WVdkdklHTm9hV3hsSUhScFpXNWtZU0J2Ym14cGJtVVFEbjNwamhFX29nRUNaWE0iLCJxdWVzdGlvbiI6IsK%2FUXXDqSBlcyB1bmEgcGFzYXJlbGEgZGUgcGFnbyBlbiBsw61uZWE%2FIiwibGsiOiJHaVJ4ZFdVZ1pYTWdkVzVoSUhCaGMyRnlaV3hoSUdSbElIQmhaMjhnWlc0Z2JHbHVaV0UiLCJicyI6ImMtTks1Tkk3dE4tNTlQRENISVhVWW9XY1JJWGMxS3o4SW9XQ3hPTEVvbFFnTnlVVnlFN1BWMGpOVTNET3lNeEp0WmQ0Sm1Xa0k2V1ZYSnBJV0VjeVNBZFhHSmZtb2YyQnBZZFhndFNYNWlWaVZacHplRzFlYXFLOXhGRXpJelVwbGNMU1ZMeUtNNEZxdWRLNWpKQ2NucHFqa0h0NFpVbC1TajVjWmU3aGhVQXppaE5UVUp3dllxUW5wUU56UGtoWEtxcW1SQ1E5RUFfb2M0a2lQT0NXazE4T00ydEhtcEd3bENEVXNXa2dDYkFHQVVZQSIsImlkIjoiZmNfcnM2ZVo3Q3lDSzdOMWU4UDZadjUtQWtfMyJ9"
+    },
+    {
+      "question": "¿Cuál es el método de pago más usado en Chile?",
+      "snippet": "Respecto de otros países, en Chile se realizan más pagos por persona con tarjetas de débito y de TEF, no así con tarjetas de crédito.",
+      "title": "Uso de medios de pago digitales en Chile: ¿cómo andamos por casa?",
+      "date": "27-08-2024",
+      "link": "https://www.bcentral.cl/web/banco-central/w/uso-medios-pago-digitales-chile#:~:text=Respecto%20de%20otros%20pa%C3%ADses%2C%20en,as%C3%AD%20con%20tarjetas%20de%20cr%C3%A9dito.",
+      "displayed_link": "https://www.bcentral.cl › web › banco-central › uso-medi...",
+      "source_logo": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/918734efbc8c45256488764c89b9097ab1e64e08549939fb702e5f52e7f50fd8.png",
+      "next_page_token": "eyJvbnMiOiIxMDA0MSIsImZjIjoiRXFFQkNtSkJRUzFMVkdoa2RtOVlSbUp0Ukc5WGVHeEljR3cwWDBrNVRXaFBWVzVrVUZOamJtUklWM056ZW5GcmRHUXpjM1p4TVhaa2VpMW1WbE4xTWpWNk9FVk1aMk5IYzNwd2JEUmxYMjVEYUZKMk9FUkdNbE5MUlhaeFJtRjVUSEJHYzBoT2R4SVhjbk0yWlZvM1EzbERTemRPTVdVNFVEWmFkalV0UVdzYUlrRkRSRmhNTkcxTFMxOXRZM2d5ZDNSQlJ6QkNjVzFuVjBKaE1FOVpSSEE1VUhjIiwiZmN2IjoiMyIsImVpIjoicnM2ZVo3Q3lDSzdOMWU4UDZadjUtQWsiLCJxYyI6IkNpUndZWE5oY21Wc1lTQmtaU0J3WVdkdklHTm9hV3hsSUhScFpXNWtZU0J2Ym14cGJtVVFEbjNwamhFX29nRUNaWE0iLCJxdWVzdGlvbiI6IsK/Q3XDoWwgZXMgZWwgbcOpdG9kbyBkZSBwYWdvIG3DoXMgdXNhZG8gZW4gQ2hpbGU/IiwibGsiOiJHaXhqZFdGc0lHVnpJR1ZzSUcxbGRHOWtieUJrWlNCd1lXZHZJRzFoY3lCMWMyRmtieUJsYmlCamFHbHNaUSIsImJzIjoiYy1OSzVOSTd0Ti01OVBEQ0hJWFVZb1djUklYYzFLejhJb1dDeE9MRW9sUWdOeVVWeUU3UFYwak5VM0RPeU14SnRaZDRKbVdrSTZXVlhKcElXRWN5U0FkWEdKZm1vZjJCcFlkWGd0U1g1aVZpVlpwemVHMWVhcUs5eEZFekl6VXBsY0xTVkx5S000RnF1ZEs1akpDY25wcWprSHQ0WlVsLVNqNWNaZTdoaFVBemloTlRVSnd2WXFRbnBRTnpQa2hYS3FxbVJDUTlFQV9vYzRraVBPQ1drMThPTTJ0SG1wR3dsQ0RVc1drZ0NiQUdBVVlBIiwiaWQiOiJmY19yczZlWjdDeUNLN04xZThQNlp2NS1Ba18zIn0=",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_related_questions&google_domain=google.com&next_page_token=eyJvbnMiOiIxMDA0MSIsImZjIjoiRXFFQkNtSkJRUzFMVkdoa2RtOVlSbUp0Ukc5WGVHeEljR3cwWDBrNVRXaFBWVzVrVUZOamJtUklWM056ZW5GcmRHUXpjM1p4TVhaa2VpMW1WbE4xTWpWNk9FVk1aMk5IYzNwd2JEUmxYMjVEYUZKMk9FUkdNbE5MUlhaeFJtRjVUSEJHYzBoT2R4SVhjbk0yWlZvM1EzbERTemRPTVdVNFVEWmFkalV0UVdzYUlrRkRSRmhNTkcxTFMxOXRZM2d5ZDNSQlJ6QkNjVzFuVjBKaE1FOVpSSEE1VUhjIiwiZmN2IjoiMyIsImVpIjoicnM2ZVo3Q3lDSzdOMWU4UDZadjUtQWsiLCJxYyI6IkNpUndZWE5oY21Wc1lTQmtaU0J3WVdkdklHTm9hV3hsSUhScFpXNWtZU0J2Ym14cGJtVVFEbjNwamhFX29nRUNaWE0iLCJxdWVzdGlvbiI6IsK%2FQ3XDoWwgZXMgZWwgbcOpdG9kbyBkZSBwYWdvIG3DoXMgdXNhZG8gZW4gQ2hpbGU%2FIiwibGsiOiJHaXhqZFdGc0lHVnpJR1ZzSUcxbGRHOWtieUJrWlNCd1lXZHZJRzFoY3lCMWMyRmtieUJsYmlCamFHbHNaUSIsImJzIjoiYy1OSzVOSTd0Ti01OVBEQ0hJWFVZb1djUklYYzFLejhJb1dDeE9MRW9sUWdOeVVWeUU3UFYwak5VM0RPeU14SnRaZDRKbVdrSTZXVlhKcElXRWN5U0FkWEdKZm1vZjJCcFlkWGd0U1g1aVZpVlpwemVHMWVhcUs5eEZFekl6VXBsY0xTVkx5S000RnF1ZEs1akpDY25wcWprSHQ0WlVsLVNqNWNaZTdoaFVBemloTlRVSnd2WXFRbnBRTnpQa2hYS3FxbVJDUTlFQV9vYzRraVBPQ1drMThPTTJ0SG1wR3dsQ0RVc1drZ0NiQUdBVVlBIiwiaWQiOiJmY19yczZlWjdDeUNLN04xZThQNlp2NS1Ba18zIn0%3D"
+    },
+    {
+      "question": "¿Qué es Flow Chile?",
+      "snippet": "Flow es una plataforma de pagos online donde podrás recibir pagos de forma rápida y segura, permitiendo agregar un botón de pago en el último paso de su reserva online, le brindará al paciente / cliente 15 minutos (a configurar) para que pueda realizar la transacción, en el caso de que esta no se efectúe, la cita en ...",
+      "title": "Pago online con Flow (Chile) | Centro de ayuda de Reservo - Intercom",
+      "link": "https://intercom.help/reservo/es/articles/8011273-pago-online-con-flow-chile#:~:text=Flow%20es%20una%20plataforma%20de,se%20efect%C3%BAe%2C%20la%20cita%20en",
+      "displayed_link": "https://intercom.help › reservo › articles › 8011273-pago-...",
+      "source_logo": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/918734efbc8c45256488764c89b9097a0b3ddee7393c8ef7bd9d3bdc0921d2b2.png",
+      "next_page_token": "eyJvbnMiOiIxMDA0MSIsImZjIjoiRXFFQkNtSkJRUzFMVkdoa2RtOVlSbUp0Ukc5WGVHeEljR3cwWDBrNVRXaFBWVzVrVUZOamJtUklWM056ZW5GcmRHUXpjM1p4TVhaa2VpMW1WbE4xTWpWNk9FVk1aMk5IYzNwd2JEUmxYMjVEYUZKMk9FUkdNbE5MUlhaeFJtRjVUSEJHYzBoT2R4SVhjbk0yWlZvM1EzbERTemRPTVdVNFVEWmFkalV0UVdzYUlrRkRSRmhNTkcxTFMxOXRZM2d5ZDNSQlJ6QkNjVzFuVjBKaE1FOVpSSEE1VUhjIiwiZmN2IjoiMyIsImVpIjoicnM2ZVo3Q3lDSzdOMWU4UDZadjUtQWsiLCJxYyI6IkNpUndZWE5oY21Wc1lTQmtaU0J3WVdkdklHTm9hV3hsSUhScFpXNWtZU0J2Ym14cGJtVVFEbjNwamhFX29nRUNaWE0iLCJxdWVzdGlvbiI6IsK/UXXDqSBlcyBGbG93IENoaWxlPyIsImxrIjoiR2hGeGRXVWdaWE1nWm14dmR5QmphR2xzWlEiLCJicyI6ImMtTks1Tkk3dE4tNTlQRENISVhVWW9XY1JJWGMxS3o4SW9XQ3hPTEVvbFFnTnlVVnlFN1BWMGpOVTNET3lNeEp0WmQ0Sm1Xa0k2V1ZYSnBJV0VjeVNBZFhHSmZtb2YyQnBZZFhndFNYNWlWaVZacHplRzFlYXFLOXhGRXpJelVwbGNMU1ZMeUtNNEZxdWRLNWpKQ2NucHFqa0h0NFpVbC1TajVjWmU3aGhVQXppaE5UVUp3dllxUW5wUU56UGtoWEtxcW1SQ1E5RUFfb2M0a2lQT0NXazE4T00ydEhtcEd3bENEVXNXa2dDYkFHQVVZQSIsImlkIjoiZmNfcnM2ZVo3Q3lDSzdOMWU4UDZadjUtQWtfMyJ9",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google_related_questions&google_domain=google.com&next_page_token=eyJvbnMiOiIxMDA0MSIsImZjIjoiRXFFQkNtSkJRUzFMVkdoa2RtOVlSbUp0Ukc5WGVHeEljR3cwWDBrNVRXaFBWVzVrVUZOamJtUklWM056ZW5GcmRHUXpjM1p4TVhaa2VpMW1WbE4xTWpWNk9FVk1aMk5IYzNwd2JEUmxYMjVEYUZKMk9FUkdNbE5MUlhaeFJtRjVUSEJHYzBoT2R4SVhjbk0yWlZvM1EzbERTemRPTVdVNFVEWmFkalV0UVdzYUlrRkRSRmhNTkcxTFMxOXRZM2d5ZDNSQlJ6QkNjVzFuVjBKaE1FOVpSSEE1VUhjIiwiZmN2IjoiMyIsImVpIjoicnM2ZVo3Q3lDSzdOMWU4UDZadjUtQWsiLCJxYyI6IkNpUndZWE5oY21Wc1lTQmtaU0J3WVdkdklHTm9hV3hsSUhScFpXNWtZU0J2Ym14cGJtVVFEbjNwamhFX29nRUNaWE0iLCJxdWVzdGlvbiI6IsK%2FUXXDqSBlcyBGbG93IENoaWxlPyIsImxrIjoiR2hGeGRXVWdaWE1nWm14dmR5QmphR2xzWlEiLCJicyI6ImMtTks1Tkk3dE4tNTlQRENISVhVWW9XY1JJWGMxS3o4SW9XQ3hPTEVvbFFnTnlVVnlFN1BWMGpOVTNET3lNeEp0WmQ0Sm1Xa0k2V1ZYSnBJV0VjeVNBZFhHSmZtb2YyQnBZZFhndFNYNWlWaVZacHplRzFlYXFLOXhGRXpJelVwbGNMU1ZMeUtNNEZxdWRLNWpKQ2NucHFqa0h0NFpVbC1TajVjWmU3aGhVQXppaE5UVUp3dllxUW5wUU56UGtoWEtxcW1SQ1E5RUFfb2M0a2lQT0NXazE4T00ydEhtcEd3bENEVXNXa2dDYkFHQVVZQSIsImlkIjoiZmNfcnM2ZVo3Q3lDSzdOMWU4UDZadjUtQWtfMyJ9"
+    }
+  ],
+  "organic_results": [
+    {
+      "position": 1,
+      "title": "Pasarelas de pago de Chile para tu Tienda Online",
+      "link": "https://jumpseller.cl/payment-gateways/",
+      "redirect_link": "https://www.google.cl/url?sa=t&source=web&rct=j&opi=89978449&url=https://jumpseller.cl/payment-gateways/&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8QFnoECBMQAQ",
+      "displayed_link": "https://jumpseller.cl › payment-gateways",
+      "favicon": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/8acd90e25d0312911116b71e11b54a42e5b7c102cf804b23a11f098ac34c6c31.png",
+      "snippet": "Integra a Klap como pasarela de pago sin cobros fijos o por integración. Recibe pagos online con tarjetas Visa y Mastercard Crédito, Débito y Prepago. No ...",
+      "snippet_highlighted_words": [
+        "Integra a Klap como pasarela de pago sin cobros fijos o por integración"
+      ],
+      "source": "Jumpseller"
+    },
+    {
+      "position": 2,
+      "title": "Las Mejores Pasarelas de Pago para tu Negocio en Chile",
+      "link": "https://billowshop.com/blog/las-mejores-pasarelas-de-pago-para-tu-negocio-en-chile/",
+      "redirect_link": "https://www.google.cl/url?sa=t&source=web&rct=j&opi=89978449&url=https://billowshop.com/blog/las-mejores-pasarelas-de-pago-para-tu-negocio-en-chile/&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8QFnoECBcQAQ",
+      "displayed_link": "https://billowshop.com › Home › Comercio Electrónico",
+      "favicon": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/8acd90e25d0312911116b71e11b54a4236dfcb5cfe47cd2d0f54aaf15bf27ee3.png",
+      "date": "10-04-2024",
+      "snippet": "1. WebPay: Con una sólida reputación por su seguridad y confiabilidad, WebPay es una opción líder en el mercado chileno. · 2. MercadoPago: · 3.",
+      "snippet_highlighted_words": [
+        "WebPay"
+      ],
+      "source": "Billowshop"
+    },
+    {
+      "position": 3,
+      "title": "Flow - Plataforma de pagos online - Chile",
+      "link": "https://www.flow.cl/",
+      "redirect_link": "https://www.google.cl/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.flow.cl/&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8QFnoECBQQAQ",
+      "displayed_link": "https://www.flow.cl",
+      "favicon": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/8acd90e25d0312911116b71e11b54a42c6bfb4773ca45fef26d1d5f3ff84cc66.png",
+      "snippet": "Flow es una plataforma de pagos online que te permite emitir y recibir pagos electrónicos vía múltiples medios de pago.",
+      "snippet_highlighted_words": [
+        "Flow es una plataforma de pagos online"
+      ],
+      "sitelinks": {
+        "inline": [
+          {
+            "title": "Conócenos",
+            "link": "https://www.flow.cl/info.php"
+          },
+          {
+            "title": "Link de pago",
+            "link": "https://www.flow.cl/cobra-email.php"
+          },
+          {
+            "title": "Logo-medio-pago",
+            "link": "https://www.flow.cl/oneclick.php"
+          },
+          {
+            "title": "En tu propia tienda gratis",
+            "link": "https://www.flow.cl/tienda-gratis.php"
+          }
+        ]
+      },
+      "source": "flow.cl"
+    },
+    {
+      "position": 4,
+      "title": "Pasarelas de Pago en Chile 2023",
+      "link": "https://digitalizame.cl/pasarelas-de-pago-en-chile/",
+      "redirect_link": "https://www.google.cl/url?sa=t&source=web&rct=j&opi=89978449&url=https://digitalizame.cl/pasarelas-de-pago-en-chile/&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8QFnoECBkQAQ",
+      "displayed_link": "https://digitalizame.cl › pasarelas-de-pago-en-chile",
+      "favicon": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/8acd90e25d0312911116b71e11b54a42af1733f766f267144f16795f13bc02d8.png",
+      "snippet": "Un repaso por las principales pasarelas de pago en Chile que puedes utilizar para vender online. Actualizado a marzo 2023.",
+      "snippet_highlighted_words": [
+        "Un repaso por las principales pasarelas de pago en Chile"
+      ],
+      "source": "Digitalízame"
+    },
+    {
+      "position": 5,
+      "title": "5 Pasarelas de pago para potenciar tu tienda online en Chile",
+      "link": "https://tecnesio.cl/ecommerce/5-pasarelas-de-pago-en-chile/",
+      "redirect_link": "https://www.google.cl/url?sa=t&source=web&rct=j&opi=89978449&url=https://tecnesio.cl/ecommerce/5-pasarelas-de-pago-en-chile/&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8QFnoECBIQAQ",
+      "displayed_link": "https://tecnesio.cl › ecommerce › 5-pasarelas-de-pago-en...",
+      "favicon": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/8acd90e25d0312911116b71e11b54a42dc06127a8b39aa9a222306a93f77a011.jpeg",
+      "snippet": "Comisiones y tarifas de MercadoPago Chile · Sus comisiones son medianamente altas · Es una de las pasarelas de pago para e-commerce pocos usadas en Chile.",
+      "snippet_highlighted_words": [
+        "MercadoPago Chile"
+      ],
+      "source": "Tecnesio.cl"
+    },
+    {
+      "position": 6,
+      "title": "las pasarelas de pago online más utilizadas en Chile (2024)",
+      "link": "https://marketing4ecommerce.cl/pasarelas-de-pagos-online/",
+      "redirect_link": "https://www.google.cl/url?sa=t&source=web&rct=j&opi=89978449&url=https://marketing4ecommerce.cl/pasarelas-de-pagos-online/&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8QFnoECBYQAQ",
+      "displayed_link": "https://marketing4ecommerce.cl › pasarelas-de-pagos-on...",
+      "favicon": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/8acd90e25d0312911116b71e11b54a427c4251a47d91ba43820eb320893c37c9.png",
+      "date": "13-12-2022",
+      "snippet": "Las 20 pasarelas de pagos online más populares en Chile · 2checkout · BlueSnap Payments · Checkout.com · Flow · JumpSeller · Khipu · Kushki · Mercado ...",
+      "snippet_highlighted_words": [
+        "2checkout"
+      ],
+      "source": "Marketing4eCommerce Chile"
+    },
+    {
+      "position": 7,
+      "title": "Transbank: La mejor solución de pagos para tu negocio ...",
+      "link": "https://publico.transbank.cl/",
+      "redirect_link": "https://www.google.cl/url?sa=t&source=web&rct=j&opi=89978449&url=https://publico.transbank.cl/&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8QFnoECBgQAQ",
+      "displayed_link": "https://publico.transbank.cl",
+      "favicon": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/8acd90e25d0312911116b71e11b54a426549675536a9d93f336bf20b809c857e.png",
+      "snippet": "Transbank es la opción de pago más conveniente para tu negocio y para todo tipo de comercios en Chile, pequeños, medianos y grandes.",
+      "snippet_highlighted_words": [
+        "Transbank es la opción de pago más conveniente para tu negocio"
+      ],
+      "source": "Transbank"
+    },
+    {
+      "position": 8,
+      "title": "Proveedores de pagos y pasarelas de pago online (2025)",
+      "link": "https://www.shopify.com/es/aceptar-pagos-en-linea",
+      "redirect_link": "https://www.google.cl/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.shopify.com/es/aceptar-pagos-en-linea&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8QFnoECDQQAQ",
+      "displayed_link": "https://www.shopify.com › aceptar-pagos-en-linea",
+      "favicon": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/8acd90e25d0312911116b71e11b54a421c4e6b8b053a8953ca683ce5f4b869d2.png",
+      "snippet": "Las pasarelas de pago posibilitan el procesamiento de tarjetas de crédito y pagos digitales. Las pasarelas de pago online son un software basado en la nube, ...",
+      "snippet_highlighted_words": [
+        "Las pasarelas de pago posibilitan el procesamiento de tarjetas de crédito y pagos digitales"
+      ],
+      "source": "Shopify"
+    },
+    {
+      "position": 9,
+      "title": "Las Mejores Pasarelas de Pago en Chile 2024",
+      "link": "https://www.pasarelasdepagos.com/las-mejores-pasarelas-de-pago-en-chile/",
+      "redirect_link": "https://www.google.cl/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.pasarelasdepagos.com/las-mejores-pasarelas-de-pago-en-chile/&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8QFnoECDgQAQ",
+      "displayed_link": "https://www.pasarelasdepagos.com › Blog",
+      "favicon": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/8acd90e25d0312911116b71e11b54a42b87beaf62ca754f13c9781fe5e9c689e.png",
+      "date": "07-12-2023",
+      "snippet": "Mercado Pago es una pasarela de pago que permite a las empresas aceptar pagos en línea. Es una empresa subsidiaria de Mercado Libre, el sitio de ...",
+      "snippet_highlighted_words": [
+        "Mercado Pago"
+      ],
+      "source": "pasarelasdepagos.com"
+    },
+    {
+      "position": 10,
+      "title": "Pasarelas de pago para tu tienda WooCommerce Chile",
+      "link": "https://www.astroselling.com/es/pasarelas-de-pago-para-woocommerce-chile/",
+      "redirect_link": "https://www.google.cl/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.astroselling.com/es/pasarelas-de-pago-para-woocommerce-chile/&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8QFnoECDYQAQ",
+      "displayed_link": "https://www.astroselling.com › pasarelas-de-pago-para-w...",
+      "favicon": "https://serpapi.com/searches/679eceacd93e94da3227f94a/images/8acd90e25d0312911116b71e11b54a42b67203d9330fcd9795ff29eb51476887.png",
+      "snippet": "Pasarelas de pago para tu tienda WooCommerce Chile · 1. WebPay Plus de Transbank: · 2. Mercado Pago: · 3. Khipu: · 4. PayPal:.",
+      "snippet_highlighted_words": [
+        "Pasarelas de pago",
+        "tienda",
+        "Chile"
+      ],
+      "rich_snippet": {
+        "top": {
+          "detected_extensions": {
+            "rating": 4.0,
+            "reviews": 92
+          },
+          "extensions": [
+            "4,0(92)"
+          ]
+        }
+      },
+      "source": "Astroselling"
+    }
+  ],
+  "related_searches": [
+    {
+      "block_position": 1,
+      "query": "Plataformas de pago online Chile",
+      "link": "https://www.google.cl/search?sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&q=Plataformas+de+pago+online+Chile&sa=X&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q1QJ6BAgzEAE",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=Plataformas+de+pago+online+Chile"
+    },
+    {
+      "block_position": 1,
+      "query": "Pasarela de pago Webpay",
+      "link": "https://www.google.cl/search?sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&q=Pasarela+de+pago+Webpay&sa=X&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q1QJ6BAgyEAE",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=Pasarela+de+pago+Webpay"
+    },
+    {
+      "block_position": 1,
+      "query": "Pasarela de pago Shopify Chile",
+      "link": "https://www.google.cl/search?sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&q=Pasarela+de+pago+Shopify+Chile&sa=X&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q1QJ6BAgxEAE",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=Pasarela+de+pago+Shopify+Chile"
+    },
+    {
+      "block_position": 1,
+      "query": "Plataformas de pago de cuentas",
+      "link": "https://www.google.cl/search?sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&q=Plataformas+de+pago+de+cuentas&sa=X&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q1QJ6BAgwEAE",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=Plataformas+de+pago+de+cuentas"
+    },
+    {
+      "block_position": 1,
+      "query": "Pasarelas de pago internacionales",
+      "link": "https://www.google.cl/search?sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&q=Pasarelas+de+pago+internacionales&sa=X&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q1QJ6BAgvEAE",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=Pasarelas+de+pago+internacionales"
+    },
+    {
+      "block_position": 1,
+      "query": "Flow pasarela de pago",
+      "link": "https://www.google.cl/search?sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&q=Flow+pasarela+de+pago&sa=X&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q1QJ6BAguEAE",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=Flow+pasarela+de+pago"
+    },
+    {
+      "block_position": 1,
+      "query": "pagos.flow.cl (web) que es",
+      "link": "https://www.google.cl/search?sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&q=pagos.flow.cl+(web)+que+es&sa=X&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q1QJ6BAgsEAE",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=pagos.flow.cl+%28web%29+que+es"
+    },
+    {
+      "block_position": 1,
+      "query": "flow.cl es confiable",
+      "link": "https://www.google.cl/search?sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&q=flow.cl+es+confiable&sa=X&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q1QJ6BAgtEAE",
+      "serpapi_link": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=flow.cl+es+confiable"
+    }
+  ],
+  "pagination": {
+    "current": 1,
+    "next": "https://www.google.cl/search?q=pasarela+de+pago+Chile+tienda+online&sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&ei=rs6eZ7CyCK7N1e8P6Zv5-Ak&start=10&sa=N&sstk=Af40H4VgMT9O8jGk1vtvLHm8cqy_wut7P3oGcViq39rbny7fB_wIzscWNkrpqpWEa8MToXCj9o9poCV1uNbNkXlj5rwUBYYcQUxwsA&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q8NMDegQIBBAW",
+    "other_pages": {
+      "2": "https://www.google.cl/search?q=pasarela+de+pago+Chile+tienda+online&sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&ei=rs6eZ7CyCK7N1e8P6Zv5-Ak&start=10&sa=N&sstk=Af40H4VgMT9O8jGk1vtvLHm8cqy_wut7P3oGcViq39rbny7fB_wIzscWNkrpqpWEa8MToXCj9o9poCV1uNbNkXlj5rwUBYYcQUxwsA&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q8tMDegQIBBAE",
+      "3": "https://www.google.cl/search?q=pasarela+de+pago+Chile+tienda+online&sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&ei=rs6eZ7CyCK7N1e8P6Zv5-Ak&start=20&sa=N&sstk=Af40H4VgMT9O8jGk1vtvLHm8cqy_wut7P3oGcViq39rbny7fB_wIzscWNkrpqpWEa8MToXCj9o9poCV1uNbNkXlj5rwUBYYcQUxwsA&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q8tMDegQIBBAG",
+      "4": "https://www.google.cl/search?q=pasarela+de+pago+Chile+tienda+online&sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&ei=rs6eZ7CyCK7N1e8P6Zv5-Ak&start=30&sa=N&sstk=Af40H4VgMT9O8jGk1vtvLHm8cqy_wut7P3oGcViq39rbny7fB_wIzscWNkrpqpWEa8MToXCj9o9poCV1uNbNkXlj5rwUBYYcQUxwsA&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q8tMDegQIBBAI",
+      "5": "https://www.google.cl/search?q=pasarela+de+pago+Chile+tienda+online&sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&ei=rs6eZ7CyCK7N1e8P6Zv5-Ak&start=40&sa=N&sstk=Af40H4VgMT9O8jGk1vtvLHm8cqy_wut7P3oGcViq39rbny7fB_wIzscWNkrpqpWEa8MToXCj9o9poCV1uNbNkXlj5rwUBYYcQUxwsA&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q8tMDegQIBBAK",
+      "6": "https://www.google.cl/search?q=pasarela+de+pago+Chile+tienda+online&sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&ei=rs6eZ7CyCK7N1e8P6Zv5-Ak&start=50&sa=N&sstk=Af40H4VgMT9O8jGk1vtvLHm8cqy_wut7P3oGcViq39rbny7fB_wIzscWNkrpqpWEa8MToXCj9o9poCV1uNbNkXlj5rwUBYYcQUxwsA&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q8tMDegQIBBAM",
+      "7": "https://www.google.cl/search?q=pasarela+de+pago+Chile+tienda+online&sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&ei=rs6eZ7CyCK7N1e8P6Zv5-Ak&start=60&sa=N&sstk=Af40H4VgMT9O8jGk1vtvLHm8cqy_wut7P3oGcViq39rbny7fB_wIzscWNkrpqpWEa8MToXCj9o9poCV1uNbNkXlj5rwUBYYcQUxwsA&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q8tMDegQIBBAO",
+      "8": "https://www.google.cl/search?q=pasarela+de+pago+Chile+tienda+online&sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&ei=rs6eZ7CyCK7N1e8P6Zv5-Ak&start=70&sa=N&sstk=Af40H4VgMT9O8jGk1vtvLHm8cqy_wut7P3oGcViq39rbny7fB_wIzscWNkrpqpWEa8MToXCj9o9poCV1uNbNkXlj5rwUBYYcQUxwsA&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q8tMDegQIBBAQ",
+      "9": "https://www.google.cl/search?q=pasarela+de+pago+Chile+tienda+online&sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&ei=rs6eZ7CyCK7N1e8P6Zv5-Ak&start=80&sa=N&sstk=Af40H4VgMT9O8jGk1vtvLHm8cqy_wut7P3oGcViq39rbny7fB_wIzscWNkrpqpWEa8MToXCj9o9poCV1uNbNkXlj5rwUBYYcQUxwsA&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q8tMDegQIBBAS",
+      "10": "https://www.google.cl/search?q=pasarela+de+pago+Chile+tienda+online&sca_esv=1bac1aac9d8b520d&gl=cl&hl=es&ei=rs6eZ7CyCK7N1e8P6Zv5-Ak&start=90&sa=N&sstk=Af40H4VgMT9O8jGk1vtvLHm8cqy_wut7P3oGcViq39rbny7fB_wIzscWNkrpqpWEa8MToXCj9o9poCV1uNbNkXlj5rwUBYYcQUxwsA&ved=2ahUKEwiwwcKp76OLAxWuZvUHHelNHp8Q8tMDegQIBBAU"
+    }
+  },
+  "serpapi_pagination": {
+    "current": 1,
+    "next_link": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=pasarela+de+pago+Chile+tienda+online&start=10",
+    "next": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=pasarela+de+pago+Chile+tienda+online&start=10",
+    "other_pages": {
+      "2": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=pasarela+de+pago+Chile+tienda+online&start=10",
+      "3": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=pasarela+de+pago+Chile+tienda+online&start=20",
+      "4": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=pasarela+de+pago+Chile+tienda+online&start=30",
+      "5": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=pasarela+de+pago+Chile+tienda+online&start=40",
+      "6": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=pasarela+de+pago+Chile+tienda+online&start=50",
+      "7": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=pasarela+de+pago+Chile+tienda+online&start=60",
+      "8": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=pasarela+de+pago+Chile+tienda+online&start=70",
+      "9": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=pasarela+de+pago+Chile+tienda+online&start=80",
+      "10": "https://serpapi.com/search.json?device=desktop&engine=google&gl=cl&google_domain=google.cl&hl=es&location=Chile&q=pasarela+de+pago+Chile+tienda+online&start=90"
+    }
+  }
+}

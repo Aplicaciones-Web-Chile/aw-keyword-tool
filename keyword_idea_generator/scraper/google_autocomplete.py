@@ -1,52 +1,84 @@
-import requests
-import json
-from urllib.parse import quote
 import os
-from ..config import Config
+import sqlite3
 import logging
 from flask import current_app, g
+from serpapi import GoogleSearch
+import json
 
 logger = logging.getLogger(__name__)
 
 class GoogleAutocomplete:
     @staticmethod
     def get_autocomplete_keywords(keyword):
-        """Obtener sugerencias de autocompletado de Google para una keyword"""
+        """Obtener sugerencias de autocompletado de Google para una keyword usando SerpApi"""
         try:
-            # Configurar la sesión
-            session = requests.Session()
-            session.headers.update(Config.REQUEST_HEADERS)
-
-            # Construir la URL con los parámetros correctos
+            current_app.logger.info(f"Iniciando búsqueda de autocompletado para keyword: {keyword}")
+            
+            # Configurar SerpApi
             params = {
-                "client": "firefox",
+                "engine": "google_autocomplete",
+                "q": keyword,
+                "location": "Chile",
+                "google_domain": "google.cl",
+                "gl": "cl",
                 "hl": "es",
-                "gl": "CL",  # Región Chile
-                "q": keyword
+                "api_key": current_app.config['SERPAPI_KEY']
             }
             
-            response = session.get(Config.AUTOCOMPLETE_URL, params=params)
-            response.raise_for_status()
+            current_app.logger.info("Realizando búsqueda con SerpApi...")
+            search = GoogleSearch(params)
+            results = search.get_dict()
             
-            suggestions = json.loads(response.text)[1]
+            # Guardar respuesta completa para debug
+            debug_dir = os.path.join(current_app.config['DATA_DIR'], 'debug')
+            os.makedirs(debug_dir, exist_ok=True)
             
-            # Guardar resultados en la base de datos
-            db = g.get_db()
+            with open(os.path.join(debug_dir, 'last_autocomplete_response.json'), 'w', encoding='utf-8') as f:
+                json.dump(results, f, indent=2, ensure_ascii=False)
+            current_app.logger.info("Respuesta JSON guardada para debug")
             
-            # Limpiar resultados anteriores para esta keyword
-            db.execute('DELETE FROM autocomplete_results WHERE seed_keyword = ?', [keyword])
+            suggestions = []
             
-            # Insertar nuevos resultados
-            for suggestion in suggestions:
-                db.execute('''
-                    INSERT INTO autocomplete_results (keyword, seed_keyword)
-                    VALUES (?, ?)
-                ''', [suggestion, keyword])
+            # Extraer sugerencias
+            if 'suggestions' in results:
+                current_app.logger.info(f"Encontradas {len(results['suggestions'])} sugerencias")
+                
+                for suggestion in results['suggestions']:
+                    if 'value' in suggestion:
+                        suggestions.append(suggestion['value'])
+                        current_app.logger.info(f"Sugerencia encontrada: {suggestion['value']}")
             
-            db.commit()
+            current_app.logger.info(f"Total de sugerencias encontradas: {len(suggestions)}")
+            
+            # Guardar en base de datos
+            if suggestions:
+                current_app.logger.info("Guardando sugerencias en la base de datos...")
+                db = get_db()
+                db.execute('DELETE FROM autocomplete_results WHERE seed_keyword = ?', [keyword])
+                
+                for suggestion in suggestions:
+                    db.execute('''
+                        INSERT INTO autocomplete_results (keyword, seed_keyword)
+                        VALUES (?, ?)
+                    ''', [suggestion, keyword])
+                
+                db.commit()
+                current_app.logger.info("Sugerencias guardadas exitosamente")
+            else:
+                current_app.logger.warning("No se encontraron sugerencias para guardar")
             
             return suggestions
             
         except Exception as e:
-            current_app.logger.error(f"Error en Google Autocomplete para '{keyword}': {str(e)}")
+            current_app.logger.error(f"Error en autocompletado para '{keyword}': {str(e)}")
             return []
+
+def get_db():
+    """Obtener conexión a la base de datos"""
+    if 'db' not in g:
+        g.db = sqlite3.connect(
+            current_app.config['DATABASE_PATH'],
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
+        g.db.row_factory = sqlite3.Row
+    return g.db

@@ -1,0 +1,27 @@
+{
+  "search_metadata": {
+    "id": "679eceaf4bee74e6945cbb2b",
+    "status": "Success",
+    "json_endpoint": "https://serpapi.com/searches/9cdeb58f07d79af3/679eceaf4bee74e6945cbb2b.json",
+    "created_at": "2025-02-02 01:47:27 UTC",
+    "processed_at": "2025-02-02 01:47:27 UTC",
+    "google_trends_url": "https://trends.google.com/trends/embed/explore/RELATED_QUERIES?hl=en&tz=420&req=%7B%22comparisonItem%22%3A%5B%7B%22keyword%22%3A%22pasarela+de+pago+Chile+tienda+online%22%2C%22geo%22%3A%22CL%22%2C%22time%22%3A%22today+12-m%22%7D%5D%2C%22category%22%3A%220%22%2C%22property%22%3A%22%22%7D",
+    "raw_html_file": "https://serpapi.com/searches/9cdeb58f07d79af3/679eceaf4bee74e6945cbb2b.html",
+    "prettify_html_file": "https://serpapi.com/searches/9cdeb58f07d79af3/679eceaf4bee74e6945cbb2b.prettify",
+    "total_time_taken": 3.67
+  },
+  "search_parameters": {
+    "engine": "google_trends",
+    "q": "pasarela de pago Chile tienda online",
+    "hl": "en",
+    "geo": "CL",
+    "cat": "0",
+    "date": "today 12-m",
+    "tz": "420",
+    "data_type": "RELATED_QUERIES"
+  },
+  "search_information": {
+    "organic_results_state": "Fully empty"
+  },
+  "error": "Google Trends hasn't returned any results for this query."
+}

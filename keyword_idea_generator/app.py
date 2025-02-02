@@ -1,270 +1,345 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, send_file, g
+from flask import Flask, request, jsonify, render_template, redirect, url_for, send_file, g, flash, current_app, Response
 from flask_socketio import SocketIO
 import sqlite3
 import csv
-from io import StringIO, BytesIO
-import os
-from .config import Config
-from .scraper.sitemap_parser import SitemapParser
-from .scraper.google_trends import GoogleTrends
-from .scraper.google_paa import GooglePAA
-from .scraper.google_autocomplete import GoogleAutocomplete
-from .sockets.analysis_ws import AnalysisNamespace
-from urllib.parse import urlparse
+import io
 from datetime import datetime
+from .config import Config
+from .scraper.google_autocomplete import GoogleAutocomplete
+from .scraper.google_paa import GooglePAA
+from .scraper.google_trends import GoogleTrends
+from .scraper.sitemap_parser import SitemapParser
 
-# Crear instancias de Flask y SocketIO
-app = Flask(__name__)
-app.config.from_object(Config)
-socketio = SocketIO(app, cors_allowed_origins="*")
-
-# Registrar namespace de WebSocket
-socketio.on_namespace(AnalysisNamespace('/analysis'))
-
-# Database initialization
 def get_db():
+    """Obtener conexión a la base de datos"""
     if 'db' not in g:
-        g.db = sqlite3.connect(Config.DATABASE_PATH)
+        g.db = sqlite3.connect(
+            current_app.config['DATABASE_PATH'],
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
         g.db.row_factory = sqlite3.Row
+    
     return g.db
 
 def init_db():
+    """Inicializar la base de datos"""
+    # Asegurar que el directorio data existe
+    import os
+    data_dir = os.path.join(os.path.dirname(current_app.config['DATABASE_PATH']))
+    os.makedirs(data_dir, exist_ok=True)
+    
     db = get_db()
     
-    # Crear tabla de dominios si no existe
-    db.execute('''
-        CREATE TABLE IF NOT EXISTS domains (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            sitemap_url TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
+    # Eliminar tablas existentes
+    db.executescript('''
+        DROP TABLE IF EXISTS autocomplete_results;
+        DROP TABLE IF EXISTS paa_results;
+        DROP TABLE IF EXISTS trends_results;
+        DROP TABLE IF EXISTS saved_keywords;
+        DROP TABLE IF EXISTS sitemaps;
+        DROP TABLE IF EXISTS seed_keywords;
     ''')
     
-    # Crear tabla de keywords guardadas si no existe
-    db.execute('''
-        CREATE TABLE IF NOT EXISTS saved_keywords (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            keyword TEXT NOT NULL,
-            type TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-    
-    # Tabla para el contenido del sitemap
-    db.execute(
-        """CREATE TABLE IF NOT EXISTS content
-                 (url TEXT PRIMARY KEY,
-                  title TEXT,
-                  description TEXT)"""
-    )
-    
-    # Tablas para resultados de análisis
-    db.execute('''
-        CREATE TABLE IF NOT EXISTS autocomplete_results (
+    # Crear tablas nuevas
+    db.executescript('''
+        CREATE TABLE autocomplete_results (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             keyword TEXT NOT NULL,
             seed_keyword TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-    
-    db.execute('''
-        CREATE TABLE IF NOT EXISTS paa_results (
+        );
+        
+        CREATE TABLE paa_results (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             keyword TEXT NOT NULL,
             seed_keyword TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-    
-    db.execute('''
-        CREATE TABLE IF NOT EXISTS trends_results (
+        );
+        
+        CREATE TABLE trends_results (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             keyword TEXT NOT NULL,
             seed_keyword TEXT NOT NULL,
+            score INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
+        );
+        
+        CREATE TABLE saved_keywords (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            keyword TEXT NOT NULL UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        
+        CREATE TABLE sitemaps (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            url TEXT NOT NULL UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        
+        CREATE TABLE seed_keywords (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            keyword TEXT NOT NULL UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
     ''')
     
     db.commit()
 
-@app.teardown_appcontext
-def close_db(error):
-    db = g.pop('db', None)
-    if db is not None:
-        db.close()
-
-# Inicializar la base de datos al inicio
-with app.app_context():
-    init_db()
-
-@app.route("/api/domains", methods=["GET"])
-def get_domains():
-    """Obtener lista de dominios guardados"""
-    db = get_db()
-    domains = db.execute('SELECT * FROM domains ORDER BY created_at DESC').fetchall()
-    return jsonify([dict(domain) for domain in domains])
-
-@app.route("/api/domains", methods=["POST"])
-def save_domain():
-    """Guardar un nuevo dominio"""
-    sitemap_url = request.json.get('sitemap_url')
-    name = request.json.get('name')
+def create_app(test_config=None):
+    """Crear y configurar la aplicación"""
+    app = Flask(__name__)
     
-    if not sitemap_url:
-        return jsonify({"error": "URL del sitemap es requerida"}), 400
-        
-    # Si no se proporciona un nombre, extraer del sitemap_url
-    if not name:
-        parsed = urlparse(sitemap_url)
-        name = parsed.netloc
-    
-    db = get_db()
-    db.execute('INSERT INTO domains (name, sitemap_url) VALUES (?, ?)',
-               [name, sitemap_url])
-    db.commit()
-    
-    return jsonify({"success": True, "name": name})
-
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if request.method == "POST":
-        sitemap_url = request.form.get("sitemap_url")
-        seed_keywords = request.form.get("seed_keywords", "").split("\n")
-        
-        if not sitemap_url:
-            return jsonify({"error": "URL del sitemap es requerida"}), 400
-            
-        if not seed_keywords or not seed_keywords[0]:
-            return jsonify({"error": "Se requieren palabras clave semilla"}), 400
-
-        try:
-            # Process sitemap
-            if not SitemapParser.parse_sitemap(sitemap_url):
-                return jsonify({"error": "URL del sitemap inválida o inaccesible"}), 400
-
-            # Generate keywords
-            for keyword in seed_keywords:
-                if keyword.strip():
-                    try:
-                        GoogleAutocomplete.get_autocomplete_keywords(keyword.strip())
-                        GooglePAA.get_paa_keywords(keyword.strip())
-                        GoogleTrends.get_trends_keywords(keyword.strip())
-                    except Exception as e:
-                        app.logger.error(f"Error procesando keyword {keyword}: {str(e)}")
-
-            return redirect(url_for("results"))
-        except Exception as e:
-            app.logger.error(f"Error en el procesamiento: {str(e)}")
-            return jsonify({"error": str(e)}), 400
-
-    return render_template("index.html")
-
-@app.route("/results")
-def results():
-    """Mostrar resultados del análisis"""
-    keywords = {}
-    db = get_db()
-    
-    # Obtener todas las keywords guardadas
-    saved_keywords = {row['keyword'] for row in db.execute('SELECT keyword FROM saved_keywords').fetchall()}
-    
-    # Obtener keywords por tipo y agruparlas por keyword semilla
-    for type_name in ['autocomplete', 'paa', 'trends']:
-        rows = db.execute(f'SELECT keyword, seed_keyword FROM {type_name}_results ORDER BY created_at DESC').fetchall()
-        for row in rows:
-            seed = row['seed_keyword']
-            if seed not in keywords:
-                keywords[seed] = {'autocomplete': [], 'paa': [], 'trends': []}
-            keywords[seed][type_name].append(row['keyword'])
-    
-    return render_template('results.html', keywords=keywords, saved_keywords=saved_keywords)
-
-@app.route("/api/keywords", methods=["POST"])
-def manage_keywords():
-    """Guardar o eliminar keywords"""
-    data = request.json
-    keyword = data.get('keyword')
-    action = data.get('action')
-    
-    if not keyword or action not in ['save', 'unsave']:
-        return jsonify({"error": "Parámetros inválidos"}), 400
-    
-    db = get_db()
-    try:
-        if action == 'save':
-            db.execute('INSERT INTO saved_keywords (keyword, type) VALUES (?, ?)',
-                      [keyword, 'manual'])
-        else:
-            db.execute('DELETE FROM saved_keywords WHERE keyword = ?', [keyword])
-        db.commit()
-        return jsonify({"success": True})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route("/export")
-def export_keywords():
-    """Exportar keywords a CSV"""
-    export_type = request.args.get('type', 'all')
-    db = get_db()
-    
-    if export_type == 'selected':
-        rows = db.execute('SELECT keyword, type FROM saved_keywords ORDER BY created_at DESC').fetchall()
+    if test_config is None:
+        app.config.from_object(Config)
     else:
-        # Obtener todas las keywords de todos los tipos
+        app.config.update(test_config)
+        
+    app.secret_key = app.config.get('SECRET_KEY', 'dev')
+    
+    # Inicializar la base de datos al crear la app
+    with app.app_context():
+        init_db()
+    
+    def close_db(e=None):
+        """Cerrar conexión a la base de datos"""
+        db = g.pop('db', None)
+        if db is not None:
+            db.close()
+            
+    app.teardown_appcontext(close_db)
+    
+    @app.route("/", methods=["GET", "POST"])
+    def index():
+        if request.method == "POST":
+            sitemap_url = request.form.get("sitemap_url")
+            seed_keywords = request.form.get("seed_keywords", "").strip()
+            
+            if not sitemap_url and not seed_keywords:
+                flash("Por favor ingresa una URL de sitemap y al menos una palabra clave", "error")
+                return render_template("index.html")
+            
+            if not sitemap_url:
+                flash("Por favor ingresa una URL de sitemap", "error")
+                return render_template("index.html")
+            
+            # Procesar keywords
+            keywords = [k.strip() for k in seed_keywords.split("\n") if k.strip()]
+            if not keywords:
+                flash("Por favor ingresa al menos una palabra clave válida", "error")
+                return render_template("index.html")
+                
+            try:
+                # Guardar sitemap
+                db = get_db()
+                db.execute('INSERT OR REPLACE INTO sitemaps (url) VALUES (?)', [sitemap_url])
+                
+                # Procesar cada keyword
+                for keyword in keywords:
+                    try:
+                        # Guardar keyword semilla
+                        db.execute('''
+                            INSERT OR REPLACE INTO seed_keywords (keyword)
+                            VALUES (?)
+                        ''', [keyword])
+                        
+                        # Obtener resultados
+                        try:
+                            autocomplete = GoogleAutocomplete.get_autocomplete_keywords(keyword)
+                            for result in autocomplete:
+                                db.execute('''
+                                    INSERT INTO autocomplete_results (keyword, seed_keyword)
+                                    VALUES (?, ?)
+                                ''', [result, keyword])
+                        except Exception as e:
+                            current_app.logger.error(f"Error en GoogleAutocomplete para {keyword}: {str(e)}")
+                            
+                        try:
+                            paa = GooglePAA.get_paa_keywords(keyword)
+                            for result in paa:
+                                db.execute('''
+                                    INSERT INTO paa_results (keyword, seed_keyword)
+                                    VALUES (?, ?)
+                                ''', [result, keyword])
+                        except Exception as e:
+                            current_app.logger.error(f"Error en GooglePAA para {keyword}: {str(e)}")
+                            
+                        try:
+                            trends = GoogleTrends.get_trends_keywords(keyword)
+                            for result in trends:
+                                db.execute('''
+                                    INSERT INTO trends_results (keyword, seed_keyword, score)
+                                    VALUES (?, ?, ?)
+                                ''', [result['keyword'], keyword, result['score']])
+                        except Exception as e:
+                            current_app.logger.error(f"Error en GoogleTrends para {keyword}: {str(e)}")
+                            
+                    except Exception as e:
+                        current_app.logger.error(f"Error procesando keyword {keyword}: {str(e)}")
+                        continue
+                    
+                db.commit()
+                return redirect(url_for("results"))
+                
+            except Exception as e:
+                current_app.logger.error(f"Error general procesando keywords: {str(e)}")
+                flash("Error procesando las palabras clave. Por favor intenta de nuevo.", "error")
+                return render_template("index.html")
+                
+        return render_template("index.html")
+
+    @app.route("/results")
+    def results():
+        """Mostrar resultados de keywords"""
+        db = get_db()
+        
+        # Obtener keywords semilla
+        seed_keywords = db.execute('''
+            SELECT DISTINCT keyword 
+            FROM seed_keywords 
+            ORDER BY created_at DESC
+        ''').fetchall()
+        
+        results = {}
+        for seed in seed_keywords:
+            keyword = seed['keyword']
+            results[keyword] = {
+                'autocomplete': [
+                    {'keyword': row['keyword']} 
+                    for row in db.execute('''
+                        SELECT keyword 
+                        FROM autocomplete_results 
+                        WHERE seed_keyword = ?
+                    ''', [keyword]).fetchall()
+                ],
+                'paa': [
+                    {'keyword': row['keyword']} 
+                    for row in db.execute('''
+                        SELECT keyword 
+                        FROM paa_results 
+                        WHERE seed_keyword = ?
+                    ''', [keyword]).fetchall()
+                ],
+                'trends': [
+                    {'keyword': row['keyword'], 'score': row['score']} 
+                    for row in db.execute('''
+                        SELECT keyword, score 
+                        FROM trends_results 
+                        WHERE seed_keyword = ?
+                        ORDER BY score DESC
+                    ''', [keyword]).fetchall()
+                ]
+            }
+        
+        return render_template("results.html", results=results)
+
+    @app.route("/api/sitemaps", methods=["GET"])
+    def get_sitemaps():
+        """Obtener lista de sitemaps guardados"""
+        db = get_db()
+        sitemaps = db.execute('SELECT * FROM sitemaps ORDER BY created_at DESC').fetchall()
+        return jsonify([dict(sitemap) for sitemap in sitemaps])
+
+    @app.route("/api/sitemaps", methods=["POST"])
+    def save_sitemap():
+        """Guardar un nuevo sitemap"""
+        url = request.json.get('url')
+        
+        if not url:
+            return jsonify({"error": "URL es requerida"}), 400
+            
+        db = get_db()
+        try:
+            db.execute('INSERT OR REPLACE INTO sitemaps (url) VALUES (?)', [url])
+            db.commit()
+            return jsonify({"success": True})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    @app.route("/api/sitemaps", methods=["DELETE"])
+    def delete_sitemap():
+        """Eliminar un sitemap guardado"""
+        url = request.json.get('url')
+        
+        if not url:
+            return jsonify({"error": "URL es requerida"}), 400
+            
+        db = get_db()
+        try:
+            db.execute('DELETE FROM sitemaps WHERE url = ?', [url])
+            db.commit()
+            return jsonify({"success": True})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    @app.route("/api/keywords/manage", methods=["POST"])
+    def manage_keywords():
+        """Guardar o eliminar keyword favorita"""
+        data = request.json
+        keyword = data.get('keyword')
+        action = data.get('action')
+        
+        if not keyword or action not in ['save', 'unsave']:
+            return jsonify({"error": "Datos inválidos"}), 400
+            
+        db = get_db()
+        try:
+            if action == 'save':
+                db.execute('''
+                    INSERT OR REPLACE INTO saved_keywords (keyword)
+                    VALUES (?)
+                ''', [keyword])
+            else:
+                db.execute('DELETE FROM saved_keywords WHERE keyword = ?', [keyword])
+                
+            db.commit()
+            return jsonify({"success": True})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    @app.route("/export", methods=["GET"])
+    def export_keywords():
+        """Exportar keywords a CSV"""
+        export_type = request.args.get('type', 'all')
+        
+        db = get_db()
         keywords = []
-        for type_name in ['autocomplete', 'paa', 'trends']:
-            type_keywords = db.execute(f'SELECT keyword, seed_keyword, ? as type FROM {type_name}_results',
-                                     [type_name]).fetchall()
-            keywords.extend(type_keywords)
-        rows = keywords
+        
+        if export_type == 'all':
+            # Exportar todas las keywords
+            keywords = db.execute('''
+                SELECT 'seed' as type, keyword FROM seed_keywords
+                UNION ALL
+                SELECT 'autocomplete' as type, keyword FROM autocomplete_results
+                UNION ALL
+                SELECT 'paa' as type, keyword FROM paa_results
+                UNION ALL
+                SELECT 'trends' as type, keyword FROM trends_results
+            ''').fetchall()
+        elif export_type == 'saved':
+            # Exportar solo keywords guardadas
+            keywords = db.execute('SELECT \'saved\' as type, keyword FROM saved_keywords').fetchall()
+        
+        # Generar CSV
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['tipo', 'keyword'])
+        for k in keywords:
+            writer.writerow([k['type'], k['keyword']])
+        
+        # Enviar archivo
+        output.seek(0)
+        return Response(
+            output.getvalue(),
+            mimetype='text/csv',
+            headers={
+                "Content-Disposition": f"attachment;filename=keywords_{export_type}.csv",
+                "Content-Type": "text/csv"
+            }
+        )
     
-    # Crear CSV en memoria
-    output = StringIO()
-    writer = csv.writer(output)
-    writer.writerow(['Keyword', 'Tipo', 'Keyword Semilla'])
-    
-    for row in rows:
-        writer.writerow([row['keyword'], row['type'], row.get('seed_keyword', '')])
-    
-    # Enviar archivo
-    output.seek(0)
-    return send_file(
-        output,
-        mimetype='text/csv',
-        as_attachment=True,
-        download_name=f'keywords_{export_type}_{datetime.now().strftime("%Y%m%d")}.csv'
-    )
-
-@app.route("/add_keyword", methods=["GET", "POST"])
-def add_keyword():
-    if request.method == "POST":
-        # Handle manual keyword addition
-        pass
-    return render_template("add_keyword.html")
-
-@app.route("/save_keyword", methods=["POST"])
-def save_keyword():
-    try:
-        keyword = request.form.get("keyword")
-        keyword_type = request.form.get("type")
-
-        # Guardar en la base de datos
-        with sqlite3.connect(app.config["DATABASE_PATH"]) as conn:
-            conn.execute(
-                """INSERT OR IGNORE INTO saved_keywords 
-                          (keyword, type, created_at) 
-                          VALUES (?, ?, datetime('now'))""",
-                (keyword, keyword_type),
-            )
-
-        return jsonify({"success": True, "message": "Keyword guardada correctamente"})
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
-
-def create_app():
     return app
 
 if __name__ == "__main__":
+    app = create_app()
+    socketio = SocketIO(app, cors_allowed_origins="*")
     socketio.run(app, host="0.0.0.0", port=5004, debug=True)
